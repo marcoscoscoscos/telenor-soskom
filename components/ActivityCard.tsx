@@ -118,14 +118,7 @@ export default function ActivityCard({
   if (isDeleting) return null;
 
   const cardInner = (
-    <div
-      className={`glass-hover rounded-2xl p-5 ${!isNew ? "glass" : ""}`}
-      style={isNew ? {
-        background: "rgba(255,255,255,0.04) padding-box, linear-gradient(to right, #ff6b9d, #c77dff, #ff9a3c) border-box",
-        border: "2px solid transparent",
-        backdropFilter: "blur(12px)",
-      } : undefined}
-    >
+    <div className="glass glass-hover rounded-2xl p-5">
       <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
 
@@ -193,6 +186,17 @@ export default function ActivityCard({
       {isNew ? (
         <div className="relative">
           {cardInner}
+          {/* Gradient border overlay — only visible at the 2px edge */}
+          <div
+            className="absolute inset-0 rounded-2xl pointer-events-none"
+            style={{
+              padding: "2px",
+              background: "linear-gradient(to right, #ff6b9d, #c77dff, #ff9a3c)",
+              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+              WebkitMaskComposite: "xor",
+              maskComposite: "exclude",
+            }}
+          />
           <span className="absolute top-0 right-4 -translate-y-1/2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#ff6b9d] via-[#c77dff] to-[#ff9a3c] text-white tracking-wide uppercase">
             Nytt forslag
           </span>
