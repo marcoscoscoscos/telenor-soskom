@@ -166,14 +166,18 @@ export default function ActivityCard({
       <div className={`mt-4 transition-opacity ${!userName ? "opacity-25 pointer-events-none select-none" : ""}`}>
         <div className="flex items-center justify-between gap-3">
           <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating || !userName} />
-          <div className="text-xs text-white/35 text-right">
+          <div className="text-right">
             {optimisticCount > 0 ? (
               <>
-                <span className="text-yellow-400 font-semibold">{optimisticTotal} ⭐</span>
-                {" "}fra {optimisticCount} {optimisticCount === 1 ? "person" : "personer"}
+                <div className="text-base font-bold text-yellow-400 leading-tight">
+                  {optimisticTotal} ⭐
+                </div>
+                <div className="text-xs text-white/50 mt-0.5">
+                  fra {optimisticCount} {optimisticCount === 1 ? "person" : "personer"}
+                </div>
               </>
             ) : (
-              <span className="text-white/25">Ingen har stemt ennå</span>
+              <span className="text-xs text-white/30">Ingen har stemt ennå</span>
             )}
           </div>
         </div>
