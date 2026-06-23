@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import ActivityCard from "./ActivityCard";
 import AddActivityModal from "./AddActivityModal";
+import CursorTooltip from "./CursorTooltip";
 import type { Activity } from "@/lib/db";
 import { getUserRatings } from "@/app/actions";
-import CursorTooltip from "./CursorTooltip";
 
 type Props = {
   activities: Activity[];
@@ -14,24 +13,22 @@ type Props = {
 
 export default function ActivitiesClient({ activities }: Props) {
   const [showModal, setShowModal] = useState(false);
-  const [voterId, setVoterId] = useState("");
   const [userName, setUserName] = useState("");
   const [nameInput, setNameInput] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const [userRatings, setUserRatings] = useState<Record<string, number>>({});
 
-  useEffect(() => {
-    let id = localStorage.getItem("voter_id");
-    if (!id) {
-      id = uuidv4();
-      localStorage.setItem("voter_id", id);
-    }
-    setVoterId(id);
+  // voter_id is derived directly from the name — same name = same identity everywhere
+  const voterId = userName.toLowerCase().trim();
+  const hasName = !!userName;
 
+  useEffect(() => {
     const savedName = localStorage.getItem("voter_name") ?? "";
     setUserName(savedName);
     setNameInput(savedName);
-
-    getUserRatings(id).then(setUserRatings);
+    if (savedName) {
+      getUserRatings(savedName.toLowerCase().trim()).then(setUserRatings);
+    }
   }, []);
 
   useEffect(() => {
@@ -44,10 +41,15 @@ export default function ActivitiesClient({ activities }: Props) {
     if (!name) return;
     setUserName(name);
     localStorage.setItem("voter_name", name);
-    if (voterId) getUserRatings(voterId).then(setUserRatings);
+    setIsEditing(false);
+    getUserRatings(name.toLowerCase().trim()).then(setUserRatings);
   }
 
-  const hasName = !!userName;
+  function startEditing() {
+    setNameInput(userName);
+    setIsEditing(true);
+  }
+
   const totalStars = activities.reduce((s, a) => s + a.vote_count, 0);
 
   return (
@@ -73,24 +75,35 @@ export default function ActivitiesClient({ activities }: Props) {
 
           {/* Name section */}
           <div className="mt-6 flex items-center justify-center">
-            {hasName ? (
-              <div className="glass rounded-full px-4 py-2 text-sm text-white/70 flex items-center gap-2 cursor-default">
+            {hasName && !isEditing ? (
+              /* Logged in — show pill with edit button */
+              <button
+                onClick={startEditing}
+                className="glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white transition-colors flex items-center gap-2"
+              >
                 <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
                 {userName}
-              </div>
+                <span className="text-white/30 text-xs">✎</span>
+              </button>
             ) : (
+              /* No name or editing — show input */
               <div className="flex flex-col items-center gap-2 w-full max-w-xs">
-                <p className="text-sm font-semibold text-white/80">
-                  👇 Skriv inn navnet ditt for å stemme og legge til forslag
-                </p>
+                {!hasName && (
+                  <p className="text-sm font-semibold text-white/80">
+                    👇 Skriv inn navnet ditt for å stemme og legge til forslag
+                  </p>
+                )}
                 <div className="flex items-center gap-2 w-full">
                   <input
                     type="text"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") saveName(); }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") saveName();
+                      if (e.key === "Escape" && hasName) setIsEditing(false);
+                    }}
                     placeholder="Navn..."
-                    className="input-dark rounded-xl px-4 py-2.5 text-sm flex-1 ring-2 ring-[#c77dff]/60 focus:ring-[#c77dff]"
+                    className={`input-dark rounded-xl px-4 py-2.5 text-sm flex-1 ${!hasName ? "ring-2 ring-[#c77dff]/60 focus:ring-[#c77dff]" : ""}`}
                     maxLength={30}
                     autoFocus
                   />
@@ -101,6 +114,14 @@ export default function ActivitiesClient({ activities }: Props) {
                   >
                     Lagre
                   </button>
+                  {hasName && (
+                    <button
+                      onClick={() => setIsEditing(false)}
+                      className="text-white/40 hover:text-white/70 text-sm transition-colors"
+                    >
+                      Avbryt
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -148,7 +169,7 @@ export default function ActivitiesClient({ activities }: Props) {
           )}
         </main>
 
-        {/* Floating add button — disabled until name is saved */}
+        {/* Floating add button */}
         <div className="fixed bottom-6 left-0 right-0 flex flex-col items-center z-20 px-4 gap-2">
           {!hasName && (
             <p className="text-xs text-white/40">Skriv inn og lagre navnet ditt for å legge til forslag</p>
