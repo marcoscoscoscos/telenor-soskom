@@ -158,7 +158,12 @@ export default function ActivityCard({
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3">
-        <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating} />
+        <div className="flex flex-col gap-1">
+          <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating || !userName} />
+          {!userName && (
+            <p className="text-xs text-white/25">Sett navn for å stemme</p>
+          )}
+        </div>
         <div className="text-xs text-white/35 text-right">
           {optimisticCount > 0 ? (
             <>
