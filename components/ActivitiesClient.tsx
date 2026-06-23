@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ActivityCard from "./ActivityCard";
 import AddActivityModal from "./AddActivityModal";
-import type { Activity } from "@/lib/supabase";
+import type { Activity } from "@/lib/kv";
 import { getVotesForVoter } from "@/app/actions";
 
 type Props = {
@@ -20,24 +20,20 @@ export default function ActivitiesClient({ activities }: Props) {
   const [nameInput, setNameInput] = useState("");
 
   useEffect(() => {
-    // Get or create voter ID
-    let id = localStorage.getItem("soskom_voter_id");
+    let id = localStorage.getItem("voter_id");
     if (!id) {
       id = uuidv4();
-      localStorage.setItem("soskom_voter_id", id);
+      localStorage.setItem("voter_id", id);
     }
     setVoterId(id);
 
-    // Get saved name
-    const savedName = localStorage.getItem("soskom_name") ?? "";
+    const savedName = localStorage.getItem("voter_name") ?? "";
     setUserName(savedName);
     setNameInput(savedName);
 
-    // Load which activities this voter has voted on
     getVotesForVoter(id).then(setVotedIds);
   }, []);
 
-  // Refresh voted IDs when activities change (after voting)
   useEffect(() => {
     if (!voterId) return;
     getVotesForVoter(voterId).then(setVotedIds);
@@ -47,10 +43,12 @@ export default function ActivitiesClient({ activities }: Props) {
     const name = nameInput.trim();
     if (name) {
       setUserName(name);
-      localStorage.setItem("soskom_name", name);
+      localStorage.setItem("voter_name", name);
     }
     setEditingName(false);
   }
+
+  const totalVotes = activities.reduce((s, a) => s + a.vote_count, 0);
 
   return (
     <>
@@ -61,21 +59,16 @@ export default function ActivitiesClient({ activities }: Props) {
 
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
-        <header className="pt-12 pb-8 px-4 text-center">
-          <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 text-xs text-white/50 mb-6 uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#06d6a0] animate-pulse" />
-            Telenor Sommerjobb 2025
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl font-bold mb-3 leading-none">
-            <span className="gradient-text">Soskom</span>
+        <header className="pt-14 pb-8 px-4 text-center">
+          <h1 className="text-5xl sm:text-6xl font-bold mb-3 leading-none tracking-tight">
+            <span className="gradient-text">Hva gjør vi?</span>
           </h1>
           <p className="text-white/50 text-base sm:text-lg max-w-sm mx-auto leading-relaxed">
-            Stem på aktiviteter du vil gjøre, eller legg til ditt eget forslag!
+            Stem på favorittene dine eller legg til et nytt forslag
           </p>
 
-          {/* Name bar */}
-          <div className="mt-6 flex items-center justify-center gap-2">
+          {/* Name pill */}
+          <div className="mt-6 flex items-center justify-center">
             {editingName ? (
               <div className="flex items-center gap-2">
                 <input
@@ -83,7 +76,10 @@ export default function ActivitiesClient({ activities }: Props) {
                   type="text"
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") saveName(); if (e.key === "Escape") setEditingName(false); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") saveName();
+                    if (e.key === "Escape") setEditingName(false);
+                  }}
                   placeholder="Skriv inn navnet ditt"
                   className="input-dark rounded-xl px-4 py-2 text-sm w-48"
                   maxLength={30}
@@ -98,35 +94,40 @@ export default function ActivitiesClient({ activities }: Props) {
             ) : (
               <button
                 onClick={() => setEditingName(true)}
-                className="glass rounded-full px-4 py-1.5 text-sm text-white/60 hover:text-white transition-colors hover:border-white/20"
+                className="glass rounded-full px-4 py-2 text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1.5"
               >
-                {userName ? `Hei, ${userName} 👋` : "Sett navn →"}
+                {userName ? (
+                  <>
+                    <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
+                    {userName}
+                  </>
+                ) : (
+                  "Sett navn for å foreslå →"
+                )}
               </button>
             )}
           </div>
         </header>
 
         {/* Main content */}
-        <main className="flex-1 px-4 pb-24 max-w-xl mx-auto w-full">
-          {/* Stats bar */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="text-sm text-white/40">
+        <main className="flex-1 px-4 pb-28 max-w-xl mx-auto w-full">
+          {/* Stats */}
+          <div className="flex items-center justify-between mb-5 text-sm">
+            <span className="text-white/40">
               <span className="text-white font-bold">{activities.length}</span>{" "}
-              {activities.length === 1 ? "forslag" : "forslag"} •{" "}
-              <span className="text-white font-bold">
-                {activities.reduce((s, a) => s + a.vote_count, 0)}
-              </span>{" "}
+              forslag &middot;{" "}
+              <span className="text-white font-bold">{totalVotes}</span>{" "}
               stemmer
-            </div>
-            <div className="text-xs text-white/30">Sortert etter stemmer</div>
+            </span>
+            <span className="text-white/25 text-xs">Sortert etter stemmer</span>
           </div>
 
           {/* Activity list */}
           {activities.length === 0 ? (
-            <div className="text-center py-20 text-white/30">
+            <div className="text-center py-24 text-white/30">
               <div className="text-5xl mb-4">🌴</div>
-              <p className="font-medium">Ingen forslag ennå!</p>
-              <p className="text-sm mt-1">Vær den første til å legge til noe.</p>
+              <p className="font-semibold text-white/50">Ingen forslag ennå</p>
+              <p className="text-sm mt-1">Vær den første til å legge til noe!</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -154,13 +155,12 @@ export default function ActivitiesClient({ activities }: Props) {
             onClick={() => setShowModal(true)}
             className="btn-gradient rounded-2xl px-8 py-4 text-white font-bold text-base shadow-[0_8px_32px_rgba(199,125,255,0.35)] flex items-center gap-2"
           >
-            <span className="text-xl">+</span>
-            Foreslå aktivitet
+            <span className="text-xl leading-none">+</span>
+            Legg til forslag
           </button>
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <AddActivityModal
           onClose={() => setShowModal(false)}

@@ -1,41 +1,32 @@
-# Telenor Soskom 🎉
+# Hva gjør vi? 🎉
 
-Stem på og foreslå sosiale aktiviteter for sommerjobben!
+Stem på og foreslå sosiale aktiviteter for sommerjobben 2026!
 
-## Oppsett (5 minutter)
+## Oppsett (2 minutter)
 
-### 1. Opprett Supabase-prosjekt (gratis)
+Appen bruker **Vercel KV** for lagring — alt skjer i Vercel-dashbordet, ingen ekstern konto nødvendig.
 
-1. Gå til [supabase.com](https://supabase.com) og opprett en konto
-2. Klikk **New Project**, velg et navn og passord
-3. Gå til **SQL Editor** og lim inn innholdet fra [`supabase-schema.sql`](./supabase-schema.sql) og kjør det
-4. Gå til **Project Settings → API** og kopier:
-   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon public key` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+### 1. Legg til KV-database i Vercel
 
-### 2. Legg til miljøvariabler i Vercel
+1. Gå til [vercel.com](https://vercel.com) → åpne prosjektet `telenor-soskom`
+2. Klikk **Storage** → **Create Database** → velg **KV**
+3. Gi den et navn (f.eks. `soskom-kv`) og klikk **Create & Continue**
+4. Klikk **Connect Project** → velg `telenor-soskom` → **Connect**
+5. Gå tilbake til prosjektet og klikk **Redeploy** (siste deployment → ⋯ → Redeploy)
 
-Gå til Vercel-prosjektet ditt → **Settings → Environment Variables** og legg til:
+Det er alt! Miljøvariablene settes automatisk av Vercel.
 
-```
-NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-```
-
-Trykk **Redeploy** etterpå.
-
-### 3. Lokal utvikling
+### Lokal utvikling
 
 ```bash
-cp .env.local.example .env.local
-# Fyll inn verdiene fra Supabase
+vercel env pull .env.local   # henter KV-variabler fra Vercel
 npm run dev
 ```
 
 ## Funksjoner
 
-- **Stem** på aktiviteter (💜 = du har stemt, 🤍 = ikke stemt)
+- **Stem** på aktiviteter (💜 = du har stemt)
 - **Foreslå** nye aktiviteter med emoji, navn og beskrivelse
-- Sortert automatisk etter flest stemmer
-- Navn lagres i nettleseren (ingen innlogging nødvendig)
-- Én stemme per person per aktivitet (basert på browser-ID)
+- Sortert etter flest stemmer
+- Navn lagres i nettleseren — ingen innlogging nødvendig
+- Én stemme per nettleser per aktivitet

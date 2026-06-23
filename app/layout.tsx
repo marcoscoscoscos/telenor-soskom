@@ -9,8 +9,8 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Telenor Soskom 🎉",
-  description: "Stem på og foreslå sosiale aktiviteter for sommerjobben!",
+  title: "Hva gjør vi? 🎉",
+  description: "Stem på og foreslå sosiale aktiviteter for sommerjobben 2026!",
 };
 
 export default function RootLayout({

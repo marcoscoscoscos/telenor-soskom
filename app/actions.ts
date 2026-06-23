@@ -1,37 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@supabase/supabase-js";
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
+import {
+  listActivities,
+  createActivity,
+  castVote,
+  removeVote,
+  getVotedActivityIds,
+} from "@/lib/kv";
 
 export async function getActivities() {
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from("activities_with_votes")
-    .select("*")
-    .order("vote_count", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-  return data ?? [];
+  return listActivities();
 }
 
-export async function getVotesForVoter(voterId: string) {
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from("votes")
-    .select("activity_id")
-    .eq("voter_id", voterId);
-
-  if (error) return [];
-  return (data ?? []).map((v) => v.activity_id as string);
-}
+export { getVotedActivityIds as getVotesForVoter };
 
 export async function addActivity(formData: FormData) {
   const title = formData.get("title") as string;
@@ -41,30 +23,25 @@ export async function addActivity(formData: FormData) {
 
   if (!title?.trim() || !addedBy?.trim()) return;
 
-  const supabase = getSupabase();
-  const { error } = await supabase.from("activities").insert({
+  await createActivity({
     title: title.trim(),
     description: description?.trim() ?? "",
     emoji: emoji || "🎉",
     added_by: addedBy.trim(),
   });
 
-  if (error) throw error;
   revalidatePath("/");
 }
 
-export async function toggleVote(activityId: string, voterId: string, hasVoted: boolean) {
-  const supabase = getSupabase();
-
+export async function toggleVote(
+  activityId: string,
+  voterId: string,
+  hasVoted: boolean
+) {
   if (hasVoted) {
-    await supabase
-      .from("votes")
-      .delete()
-      .eq("activity_id", activityId)
-      .eq("voter_id", voterId);
+    await removeVote(activityId, voterId);
   } else {
-    await supabase.from("votes").insert({ activity_id: activityId, voter_id: voterId });
+    await castVote(activityId, voterId);
   }
-
   revalidatePath("/");
 }
