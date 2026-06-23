@@ -186,7 +186,7 @@ export default function ActivitiesClient({ activities }: Props) {
         </main>
 
         {/* Floating add button */}
-        <div className="fixed bottom-6 left-0 right-0 flex flex-col items-center z-20 px-4 gap-2">
+        <div className="fixed bottom-6 xl:bottom-16 2xl:bottom-24 left-0 right-0 flex flex-col items-center z-20 px-4 gap-2">
           {!hasName && (
             <p className="text-xs text-white/40">Skriv inn og lagre navnet ditt for å legge til forslag</p>
           )}
