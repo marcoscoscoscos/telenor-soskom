@@ -1,11 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ActivityCard from "./ActivityCard";
 import AddActivityModal from "./AddActivityModal";
 import CursorTooltip from "./CursorTooltip";
 import type { Activity } from "@/lib/db";
 import { getUserRatings } from "@/app/actions";
+
+type RGB = [number, number, number];
+
+function lerp(a: number, b: number, t: number) {
+  return Math.round(a + (b - a) * Math.min(Math.max(t, 0), 1));
+}
+function lerpColor(from: RGB, to: RGB, t: number) {
+  return `rgb(${lerp(from[0],to[0],t)},${lerp(from[1],to[1],t)},${lerp(from[2],to[2],t)})`;
+}
+
+// low-energy → high-energy colours for each blob
+const BLOB_PALETTES: [RGB, RGB][] = [
+  [[90, 40, 140],  [224, 64, 251]],   // purple
+  [[150, 40, 80],  [255, 26, 110]],   // pink
+  [[150, 90, 20],  [255, 160, 0]],    // orange
+  [[15, 90, 90],   [6, 214, 160]],    // teal
+];
 
 type Props = {
   activities: Activity[];
@@ -57,12 +74,31 @@ export default function ActivitiesClient({ activities }: Props) {
 
   const totalStars = activities.reduce((s, a) => s + a.vote_count, 0);
 
+  const vibe = useMemo(() => {
+    // energy: 0→1 as total stars grow (saturates around 200 stars for a team of 23)
+    const energy = Math.min(totalStars / 200, 1);
+    // dominance: 0→1 based on how far ahead the leader is from 2nd place
+    const gap = activities.length >= 2
+      ? activities[0].vote_count - activities[1].vote_count
+      : activities.length === 1 ? activities[0].vote_count : 0;
+    const dominance = Math.min(gap / 35, 1);
+    return energy * 0.65 + dominance * 0.35;
+  }, [totalStars, activities]);
+
+  const blobOpacity = 0.10 + vibe * 0.22;
+  const blobColors = BLOB_PALETTES.map(([from, to]) => lerpColor(from, to, vibe));
+
   return (
     <>
-      {/* Background blobs */}
-      <div className="blob blob-1 w-[600px] h-[600px] bg-[#c77dff] top-[-200px] left-[-200px]" />
-      <div className="blob blob-2 w-[500px] h-[500px] bg-[#ff6b9d] top-[30%] right-[-150px]" />
-      <div className="blob blob-3 w-[400px] h-[400px] bg-[#ff9a3c] bottom-[-100px] left-[20%]" />
+      {/* Background blobs — colour and opacity react to total votes and leading gap */}
+      <div className="blob blob-1 w-[700px] h-[700px] top-[-250px] left-[-250px]"
+           style={{ backgroundColor: blobColors[0], opacity: blobOpacity }} />
+      <div className="blob blob-2 w-[600px] h-[600px] top-[30%] right-[-200px]"
+           style={{ backgroundColor: blobColors[1], opacity: blobOpacity * 0.9 }} />
+      <div className="blob blob-3 w-[500px] h-[500px] bottom-[-120px] left-[15%]"
+           style={{ backgroundColor: blobColors[2], opacity: blobOpacity * 0.8 }} />
+      <div className="blob blob-4 w-[400px] h-[400px] top-[55%] left-[-120px]"
+           style={{ backgroundColor: blobColors[3], opacity: blobOpacity * 0.7 }} />
 
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Header */}
