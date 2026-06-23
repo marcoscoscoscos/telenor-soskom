@@ -162,22 +162,19 @@ export default function ActivityCard({
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-1">
+      <div className={`mt-4 transition-opacity ${!userName ? "opacity-30 pointer-events-none select-none" : ""}`}>
+        <div className="flex items-center justify-between gap-3">
           <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating || !userName} />
-          {!userName && (
-            <p className="text-xs text-white/25">Sett navn for å stemme</p>
-          )}
-        </div>
-        <div className="text-xs text-white/35 text-right">
-          {optimisticCount > 0 ? (
-            <>
-              <span className="text-yellow-400 font-semibold">{optimisticTotal} ⭐</span>
-              {" "}fra {optimisticCount} {optimisticCount === 1 ? "person" : "personer"}
-            </>
-          ) : (
-            <span className="text-white/25">Ingen har stemt ennå</span>
-          )}
+          <div className="text-xs text-white/35 text-right">
+            {optimisticCount > 0 ? (
+              <>
+                <span className="text-yellow-400 font-semibold">{optimisticTotal} ⭐</span>
+                {" "}fra {optimisticCount} {optimisticCount === 1 ? "person" : "personer"}
+              </>
+            ) : (
+              <span className="text-white/25">Ingen har stemt ennå</span>
+            )}
+          </div>
         </div>
       </div>
     </div>

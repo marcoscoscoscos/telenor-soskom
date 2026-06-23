@@ -72,40 +72,38 @@ export default function ActivitiesClient({ activities }: Props) {
           {/* Name section */}
           <div className="mt-6 flex items-center justify-center">
             {hasName ? (
-              /* Name is saved — show pill, click to edit */
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    setUserName("");
-                    setNameInput(userName);
-                  }}
-                  className="glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white transition-colors flex items-center gap-2"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
-                  {userName}
-                  <span className="text-white/30 text-xs">✎</span>
-                </button>
-              </div>
+              <button
+                onClick={() => { setUserName(""); setNameInput(userName); }}
+                className="glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white transition-colors flex items-center gap-2"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
+                {userName}
+                <span className="text-white/30 text-xs">✎</span>
+              </button>
             ) : (
-              /* No name yet — show prominent input */
-              <div className="flex items-center gap-2 w-full max-w-xs">
-                <input
-                  type="text"
-                  value={nameInput}
-                  onChange={(e) => setNameInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") saveName(); }}
-                  placeholder="Skriv inn navnet ditt..."
-                  className="input-dark rounded-xl px-4 py-2.5 text-sm flex-1"
-                  maxLength={30}
-                  autoFocus
-                />
-                <button
-                  onClick={saveName}
-                  disabled={!nameInput.trim()}
-                  className="btn-gradient rounded-xl px-4 py-2.5 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-                >
-                  Lagre
-                </button>
+              <div className="flex flex-col items-center gap-2 w-full max-w-xs">
+                <p className="text-sm font-semibold text-white/80">
+                  👇 Skriv inn navnet ditt for å stemme og legge til forslag
+                </p>
+                <div className="flex items-center gap-2 w-full">
+                  <input
+                    type="text"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") saveName(); }}
+                    placeholder="Navn..."
+                    className="input-dark rounded-xl px-4 py-2.5 text-sm flex-1 ring-2 ring-[#c77dff]/60 focus:ring-[#c77dff]"
+                    maxLength={30}
+                    autoFocus
+                  />
+                  <button
+                    onClick={saveName}
+                    disabled={!nameInput.trim()}
+                    className="btn-gradient rounded-xl px-4 py-2.5 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                  >
+                    Lagre
+                  </button>
+                </div>
               </div>
             )}
           </div>
