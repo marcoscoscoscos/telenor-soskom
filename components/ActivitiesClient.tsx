@@ -85,7 +85,7 @@ export default function ActivitiesClient({ activities }: Props) {
     return energy * 0.65 + dominance * 0.35;
   }, [totalStars, activities]);
 
-  const blobOpacity = 0.10 + vibe * 0.22;
+  const blobOpacity = 0.10 + vibe * 0.16;
   const blobColors = BLOB_PALETTES.map(([from, to]) => lerpColor(from, to, vibe));
 
   return (
