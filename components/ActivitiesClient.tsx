@@ -76,15 +76,19 @@ export default function ActivitiesClient({ activities }: Props) {
           {/* Name section */}
           <div className="mt-6 flex items-center justify-center">
             {hasName && !isEditing ? (
-              /* Logged in — show pill with edit button */
-              <button
-                onClick={startEditing}
-                className="glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white transition-colors flex items-center gap-2"
-              >
-                <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
-                {userName}
-                <span className="text-white/30 text-xs">✎</span>
-              </button>
+              /* Logged in — show pill + separate edit button */
+              <div className="flex items-center gap-2">
+                <div className="glass rounded-full px-4 py-2 text-sm text-white/70 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
+                  {userName}
+                </div>
+                <button
+                  onClick={startEditing}
+                  className="glass rounded-full px-3 py-2 text-xs text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  Bytt navn
+                </button>
+              </div>
             ) : (
               /* No name or editing — show input */
               <div className="flex flex-col items-center gap-2 w-full max-w-xs">
