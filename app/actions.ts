@@ -58,11 +58,10 @@ export async function rateActivity(
 }
 
 export async function removeActivity(
-  activityId: string,
-  voterId: string
+  activityId: string
 ): Promise<{ error: string | null }> {
   try {
-    await deleteActivity(activityId, voterId);
+    await deleteActivity(activityId);
   } catch {
     return { error: "Klarte ikke å slette aktiviteten." };
   }

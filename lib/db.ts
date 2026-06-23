@@ -90,14 +90,10 @@ export async function getUserRatings(
   );
 }
 
-export async function deleteActivity(
-  activityId: string,
-  voterId: string
-): Promise<void> {
+export async function deleteActivity(activityId: string): Promise<void> {
   const { error } = await getClient()
     .from("activities")
     .delete()
-    .eq("id", activityId)
-    .eq("voter_id", voterId);
+    .eq("id", activityId);
   if (error) throw error;
 }
