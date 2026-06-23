@@ -44,6 +44,7 @@ export default function ActivitiesClient({ activities }: Props) {
     if (!name) return;
     setUserName(name);
     localStorage.setItem("voter_name", name);
+    if (voterId) getUserRatings(voterId).then(setUserRatings);
   }
 
   const hasName = !!userName;
