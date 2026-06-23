@@ -201,6 +201,7 @@ export default function ActivitiesClient({ activities }: Props) {
                   emoji={activity.emoji}
                   addedBy={activity.added_by}
                   activityVoterId={activity.voter_id}
+                  createdAt={activity.created_at}
                   voteCount={activity.vote_count}
                   ratingCount={activity.rating_count}
                   userRating={userRatings[activity.id] ?? 0}

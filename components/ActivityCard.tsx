@@ -11,6 +11,7 @@ type Props = {
   emoji: string;
   addedBy: string;
   activityVoterId: string | null;
+  createdAt: string;
   voteCount: number;
   ratingCount: number;
   userRating: number;
@@ -60,12 +61,14 @@ export default function ActivityCard({
   emoji,
   addedBy,
   activityVoterId,
+  createdAt,
   voteCount,
   ratingCount,
   userRating,
   voterId,
   userName,
 }: Props) {
+  const isNew = Date.now() - new Date(createdAt).getTime() < 30 * 60 * 1000;
   const [optimisticRating, setOptimisticRating] = useState(userRating);
   const [optimisticTotal, setOptimisticTotal] = useState(voteCount);
   const [optimisticCount, setOptimisticCount] = useState(ratingCount);
@@ -114,9 +117,8 @@ export default function ActivityCard({
 
   if (isDeleting) return null;
 
-  return (
-    <CursorTooltip text="Skriv inn navnet ditt først" enabled={!userName}>
-    <div className="glass glass-hover rounded-2xl p-5">
+  const cardInner = (
+    <div className={`glass glass-hover p-5 ${isNew ? "rounded-[14px]" : "rounded-2xl"}`}>
       <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
 
@@ -177,6 +179,22 @@ export default function ActivityCard({
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <CursorTooltip text="Skriv inn navnet ditt først" enabled={!userName}>
+      {isNew ? (
+        <div className="relative">
+          <div className="p-[2px] rounded-2xl bg-gradient-to-r from-[#ff6b9d] via-[#c77dff] to-[#ff9a3c]">
+            {cardInner}
+          </div>
+          <span className="absolute top-0 right-4 -translate-y-1/2 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#ff6b9d] via-[#c77dff] to-[#ff9a3c] text-white tracking-wide uppercase">
+            Nytt forslag
+          </span>
+        </div>
+      ) : (
+        cardInner
+      )}
     </CursorTooltip>
   );
 }
