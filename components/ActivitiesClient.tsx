@@ -15,9 +15,8 @@ export default function ActivitiesClient({ activities }: Props) {
   const [showModal, setShowModal] = useState(false);
   const [voterId, setVoterId] = useState("");
   const [userName, setUserName] = useState("");
-  const [userRatings, setUserRatings] = useState<Record<string, number>>({});
-  const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
+  const [userRatings, setUserRatings] = useState<Record<string, number>>({});
 
   useEffect(() => {
     let id = localStorage.getItem("voter_id");
@@ -41,13 +40,12 @@ export default function ActivitiesClient({ activities }: Props) {
 
   function saveName() {
     const name = nameInput.trim();
-    if (name) {
-      setUserName(name);
-      localStorage.setItem("voter_name", name);
-    }
-    setEditingName(false);
+    if (!name) return;
+    setUserName(name);
+    localStorage.setItem("voter_name", name);
   }
 
+  const hasName = !!userName;
   const totalStars = activities.reduce((s, a) => s + a.vote_count, 0);
 
   return (
@@ -71,51 +69,50 @@ export default function ActivitiesClient({ activities }: Props) {
             Gi stjerner til aktivitetene du liker, eller legg til ditt eget forslag
           </p>
 
-          {/* Name pill */}
+          {/* Name section */}
           <div className="mt-6 flex items-center justify-center">
-            {editingName ? (
+            {hasName ? (
+              /* Name is saved — show pill, click to edit */
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setUserName("");
+                    setNameInput(userName);
+                  }}
+                  className="glass rounded-full px-4 py-2 text-sm text-white/70 hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
+                  {userName}
+                  <span className="text-white/30 text-xs">✎</span>
+                </button>
+              </div>
+            ) : (
+              /* No name yet — show prominent input */
+              <div className="flex items-center gap-2 w-full max-w-xs">
                 <input
-                  autoFocus
                   type="text"
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") saveName();
-                    if (e.key === "Escape") setEditingName(false);
-                  }}
-                  placeholder="Skriv inn navnet ditt"
-                  className="input-dark rounded-xl px-4 py-2 text-sm w-48"
+                  onKeyDown={(e) => { if (e.key === "Enter") saveName(); }}
+                  placeholder="Skriv inn navnet ditt..."
+                  className="input-dark rounded-xl px-4 py-2.5 text-sm flex-1"
                   maxLength={30}
+                  autoFocus
                 />
                 <button
                   onClick={saveName}
-                  className="btn-gradient rounded-xl px-4 py-2 text-white text-sm font-semibold"
+                  disabled={!nameInput.trim()}
+                  className="btn-gradient rounded-xl px-4 py-2.5 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
                 >
                   Lagre
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={() => setEditingName(true)}
-                className="glass rounded-full px-4 py-2 text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1.5"
-              >
-                {userName ? (
-                  <>
-                    <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
-                    {userName}
-                  </>
-                ) : (
-                  "Sett navn for å foreslå →"
-                )}
-              </button>
             )}
           </div>
         </header>
 
         {/* Main content */}
         <main className="flex-1 px-4 pb-28 max-w-xl mx-auto w-full">
-          {/* Stats */}
           <div className="flex items-center justify-between mb-5 text-sm">
             <span className="text-white/40">
               <span className="text-white font-bold">{activities.length}</span>{" "}
@@ -155,11 +152,19 @@ export default function ActivitiesClient({ activities }: Props) {
           )}
         </main>
 
-        {/* Floating add button */}
-        <div className="fixed bottom-6 left-0 right-0 flex justify-center z-20 px-4">
+        {/* Floating add button — disabled until name is saved */}
+        <div className="fixed bottom-6 left-0 right-0 flex flex-col items-center z-20 px-4 gap-2">
+          {!hasName && (
+            <p className="text-xs text-white/40">Skriv inn og lagre navnet ditt for å legge til forslag</p>
+          )}
           <button
-            onClick={() => setShowModal(true)}
-            className="btn-gradient rounded-2xl px-8 py-4 text-white font-bold text-base shadow-[0_8px_32px_rgba(199,125,255,0.35)] flex items-center gap-2"
+            onClick={() => hasName && setShowModal(true)}
+            disabled={!hasName}
+            className={`rounded-2xl px-8 py-4 text-white font-bold text-base flex items-center gap-2 transition-all ${
+              hasName
+                ? "btn-gradient shadow-[0_8px_32px_rgba(199,125,255,0.35)]"
+                : "bg-white/10 cursor-not-allowed opacity-50"
+            }`}
           >
             <span className="text-xl leading-none">+</span>
             Legg til forslag
@@ -172,11 +177,6 @@ export default function ActivitiesClient({ activities }: Props) {
           onClose={() => setShowModal(false)}
           userName={userName}
           voterId={voterId}
-          onSaveName={(name) => {
-            setUserName(name);
-            localStorage.setItem("voter_name", name);
-            setNameInput(name);
-          }}
         />
       )}
     </>

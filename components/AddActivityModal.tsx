@@ -13,33 +13,26 @@ type Props = {
   onClose: () => void;
   userName: string;
   voterId: string;
-  onSaveName: (name: string) => void;
 };
 
-export default function AddActivityModal({ onClose, userName, voterId, onSaveName }: Props) {
+export default function AddActivityModal({ onClose, userName, voterId }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [selectedEmoji, setSelectedEmoji] = useState("🎉");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const [localName, setLocalName] = useState(userName);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const title = fd.get("title") as string;
-    const name = localName.trim();
 
     if (!title?.trim()) {
       setError("Gi aktiviteten et navn!");
       return;
     }
-    if (!name) {
-      setError("Skriv inn navnet ditt!");
-      return;
-    }
 
     fd.set("emoji", selectedEmoji);
-    fd.set("added_by", name);
+    fd.set("added_by", userName);
     fd.set("voter_id", voterId);
     setError("");
 
@@ -49,7 +42,6 @@ export default function AddActivityModal({ onClose, userName, voterId, onSaveNam
         setError(result.error);
         return;
       }
-      onSaveName(name);
       onClose();
     });
   }
@@ -71,22 +63,6 @@ export default function AddActivityModal({ onClose, userName, voterId, onSaveNam
         </div>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
-          <div>
-            <label className="block text-xs text-white/40 uppercase tracking-wider mb-2">
-              Ditt navn *
-            </label>
-            <input
-              type="text"
-              value={localName}
-              onChange={(e) => setLocalName(e.target.value)}
-              placeholder="Skriv inn navnet ditt"
-              className="input-dark w-full rounded-xl px-4 py-3 text-sm"
-              maxLength={30}
-              autoFocus={!localName}
-            />
-          </div>
-
           {/* Emoji picker */}
           <div>
             <label className="block text-xs text-white/40 uppercase tracking-wider mb-2">
@@ -120,7 +96,7 @@ export default function AddActivityModal({ onClose, userName, voterId, onSaveNam
               type="text"
               placeholder="f.eks. Bowling på fredag!"
               className="input-dark w-full rounded-xl px-4 py-3 text-sm"
-              autoFocus={!!localName}
+              autoFocus
             />
           </div>
 
