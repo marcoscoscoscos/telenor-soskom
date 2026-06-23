@@ -165,6 +165,11 @@ export default function ActivitiesClient({ activities }: Props) {
         <AddActivityModal
           onClose={() => setShowModal(false)}
           userName={userName}
+          onSaveName={(name) => {
+            setUserName(name);
+            localStorage.setItem("voter_name", name);
+            setNameInput(name);
+          }}
         />
       )}
     </>

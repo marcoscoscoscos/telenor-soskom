@@ -31,12 +31,18 @@ export default function ActivityCard({
   const [isPending, startTransition] = useTransition();
 
   function handleVote() {
-    const nextVoted = !optimisticVoted;
+    const prevVoted = optimisticVoted;
+    const nextVoted = !prevVoted;
     setOptimisticVoted(nextVoted);
     setOptimisticCount((c) => (nextVoted ? c + 1 : c - 1));
 
     startTransition(async () => {
-      await toggleVote(id, voterId, optimisticVoted);
+      const result = await toggleVote(id, voterId, prevVoted);
+      if (result.error) {
+        // Roll back optimistic update
+        setOptimisticVoted(prevVoted);
+        setOptimisticCount((c) => (nextVoted ? c - 1 : c + 1));
+      }
     });
   }
 

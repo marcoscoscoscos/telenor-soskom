@@ -15,33 +15,50 @@ export async function getActivities() {
 
 export { getVotedActivityIds as getVotesForVoter };
 
-export async function addActivity(formData: FormData) {
+export async function addActivity(
+  formData: FormData
+): Promise<{ error: string | null }> {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const emoji = formData.get("emoji") as string;
   const addedBy = formData.get("added_by") as string;
 
-  if (!title?.trim() || !addedBy?.trim()) return;
+  if (!title?.trim()) return { error: "Aktiviteten trenger et navn." };
+  if (!addedBy?.trim()) return { error: "Du må skrive inn navnet ditt." };
 
-  await createActivity({
-    title: title.trim(),
-    description: description?.trim() ?? "",
-    emoji: emoji || "🎉",
-    added_by: addedBy.trim(),
-  });
+  try {
+    await createActivity({
+      title: title.trim(),
+      description: description?.trim() ?? "",
+      emoji: emoji || "🎉",
+      added_by: addedBy.trim(),
+    });
+  } catch {
+    return {
+      error:
+        "Klarte ikke å lagre. Sjekk at Vercel KV er koblet til prosjektet og redeploy.",
+    };
+  }
 
   revalidatePath("/");
+  return { error: null };
 }
 
 export async function toggleVote(
   activityId: string,
   voterId: string,
   hasVoted: boolean
-) {
-  if (hasVoted) {
-    await removeVote(activityId, voterId);
-  } else {
-    await castVote(activityId, voterId);
+): Promise<{ error: string | null }> {
+  try {
+    if (hasVoted) {
+      await removeVote(activityId, voterId);
+    } else {
+      await castVote(activityId, voterId);
+    }
+  } catch {
+    return { error: "Klarte ikke å stemme. Prøv igjen." };
   }
+
   revalidatePath("/");
+  return { error: null };
 }
