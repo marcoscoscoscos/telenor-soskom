@@ -146,7 +146,7 @@ export default function ActivitiesClient({ activities }: Props) {
         </header>
 
         {/* Main content */}
-        <main className="flex-1 px-4 pb-28 max-w-xl mx-auto w-full">
+        <main className="flex-1 px-4 pb-16 max-w-xl mx-auto w-full">
           <div className="flex items-center justify-between mb-5 text-sm">
             <span className="text-white/40">
               <span className="text-white font-bold">{activities.length}</span>{" "}
@@ -157,15 +157,42 @@ export default function ActivitiesClient({ activities }: Props) {
             <span className="text-white/25 text-xs">Sortert etter stjerner</span>
           </div>
 
-          {activities.length === 0 ? (
-            <div className="text-center py-24 text-white/30">
-              <div className="text-5xl mb-4">🌴</div>
-              <p className="font-semibold text-white/50">Ingen forslag ennå</p>
-              <p className="text-sm mt-1">Vær den første til å legge til noe!</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {activities.map((activity, i) => (
+          <div className="space-y-3">
+            {/* Add proposal card */}
+            <CursorTooltip text="Skriv inn navnet ditt først" enabled={!hasName}>
+              <button
+                onClick={() => hasName && setShowModal(true)}
+                disabled={!hasName}
+                className={`w-full rounded-2xl p-5 border-2 border-dashed flex items-center gap-4 transition-all group ${
+                  hasName
+                    ? "border-white/20 hover:border-[#c77dff]/60 hover:bg-white/5 cursor-pointer"
+                    : "border-white/10 opacity-50 cursor-not-allowed"
+                }`}
+              >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 transition-colors ${
+                  hasName ? "bg-white/5 group-hover:bg-[#c77dff]/20" : "bg-white/5"
+                }`}>
+                  +
+                </div>
+                <div className="text-left">
+                  <p className={`font-semibold text-sm transition-colors ${hasName ? "text-white/60 group-hover:text-white/90" : "text-white/30"}`}>
+                    Legg til forslag
+                  </p>
+                  <p className="text-xs text-white/25 mt-0.5">
+                    {hasName ? "Klikk for å legge til din aktivitet" : "Logg inn for å legge til"}
+                  </p>
+                </div>
+              </button>
+            </CursorTooltip>
+
+            {activities.length === 0 ? (
+              <div className="text-center py-20 text-white/30">
+                <div className="text-5xl mb-4">🌴</div>
+                <p className="font-semibold text-white/50">Ingen forslag ennå</p>
+                <p className="text-sm mt-1">Vær den første til å legge til noe!</p>
+              </div>
+            ) : (
+              activities.map((activity) => (
                 <ActivityCard
                   key={activity.id}
                   id={activity.id}
@@ -180,31 +207,10 @@ export default function ActivitiesClient({ activities }: Props) {
                   voterId={voterId}
                   userName={userName}
                 />
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </main>
-
-        {/* Floating add button */}
-        <div className="fixed bottom-6 xl:bottom-16 2xl:bottom-24 left-0 right-0 flex flex-col items-center z-20 px-4 gap-2">
-          {!hasName && (
-            <p className="text-xs text-white/40">Skriv inn og lagre navnet ditt for å legge til forslag</p>
-          )}
-          <CursorTooltip text="Skriv inn navnet ditt først" enabled={!hasName}>
-            <button
-              onClick={() => hasName && setShowModal(true)}
-              disabled={!hasName}
-              className={`rounded-2xl px-8 py-4 text-white font-bold text-base flex items-center gap-2 transition-all ${
-                hasName
-                  ? "btn-gradient shadow-[0_8px_32px_rgba(199,125,255,0.35)]"
-                  : "bg-white/10 cursor-not-allowed opacity-50"
-              }`}
-            >
-              <span className="text-xl leading-none">+</span>
-              Legg til forslag
-            </button>
-          </CursorTooltip>
-        </div>
       </div>
 
       {showModal && (
