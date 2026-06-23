@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { rateActivity, removeActivity } from "@/app/actions";
+import CursorTooltip from "./CursorTooltip";
 
 type Props = {
   id: string;
@@ -114,16 +115,10 @@ export default function ActivityCard({
   if (isDeleting) return null;
 
   return (
-    <div className="relative group" style={{ animationDelay: `${index * 60}ms` }}>
-      {!userName && (
-        <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-          <div className="bg-[#1a1a24] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white whitespace-nowrap shadow-xl">
-            Skriv inn navnet ditt først
-          </div>
-        </div>
-      )}
+    <CursorTooltip text="Skriv inn navnet ditt først" enabled={!userName}>
     <div
       className="glass glass-hover rounded-2xl p-5 slide-up"
+      style={{ animationDelay: `${index * 60}ms` }}
     >
       <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
@@ -185,6 +180,6 @@ export default function ActivityCard({
         </div>
       </div>
     </div>
-    </div>
+    </CursorTooltip>
   );
 }

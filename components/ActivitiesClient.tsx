@@ -6,6 +6,7 @@ import ActivityCard from "./ActivityCard";
 import AddActivityModal from "./AddActivityModal";
 import type { Activity } from "@/lib/db";
 import { getUserRatings } from "@/app/actions";
+import CursorTooltip from "./CursorTooltip";
 
 type Props = {
   activities: Activity[];
@@ -155,14 +156,7 @@ export default function ActivitiesClient({ activities }: Props) {
           {!hasName && (
             <p className="text-xs text-white/40">Skriv inn og lagre navnet ditt for å legge til forslag</p>
           )}
-          <div className="relative group">
-            {!hasName && (
-              <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                <div className="bg-[#1a1a24] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white whitespace-nowrap shadow-xl">
-                  Skriv inn navnet ditt først
-                </div>
-              </div>
-            )}
+          <CursorTooltip text="Skriv inn navnet ditt først" enabled={!hasName}>
             <button
               onClick={() => hasName && setShowModal(true)}
               disabled={!hasName}
@@ -175,7 +169,7 @@ export default function ActivitiesClient({ activities }: Props) {
               <span className="text-xl leading-none">+</span>
               Legg til forslag
             </button>
-          </div>
+          </CursorTooltip>
         </div>
       </div>
 
