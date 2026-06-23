@@ -74,7 +74,7 @@ export default function ActivitiesClient({ activities }: Props) {
               gjøre i sommer?
             </span>
           </h1>
-          <p className="text-white/50 text-base max-w-sm mx-auto leading-relaxed">
+          <p className="text-white/50 text-base max-w-sm sm:max-w-none mx-auto leading-relaxed">
             Gi stjerner til aktivitetene du liker, eller legg til ditt eget forslag
           </p>
 
@@ -98,7 +98,7 @@ export default function ActivitiesClient({ activities }: Props) {
               /* No name or editing — show input */
               <div className="flex flex-col items-center gap-2 w-full max-w-xs">
                 {!hasName && (
-                  <p className="text-sm font-semibold text-white/80">
+                  <p className="text-sm font-semibold text-white/80 sm:whitespace-nowrap">
                     👇 Skriv inn navnet ditt for å stemme og legge til forslag
                   </p>
                 )}
