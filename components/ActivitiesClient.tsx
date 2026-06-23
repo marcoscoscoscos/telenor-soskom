@@ -158,6 +158,7 @@ export default function ActivitiesClient({ activities }: Props) {
           <button
             onClick={() => hasName && setShowModal(true)}
             disabled={!hasName}
+            title={!hasName ? "Skriv inn navnet ditt først" : undefined}
             className={`rounded-2xl px-8 py-4 text-white font-bold text-base flex items-center gap-2 transition-all ${
               hasName
                 ? "btn-gradient shadow-[0_8px_32px_rgba(199,125,255,0.35)]"

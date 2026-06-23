@@ -113,12 +113,15 @@ export default function ActivityCard({
 
   if (isDeleting) return null;
 
+  const noNameTitle = !userName ? "Skriv inn navnet ditt først" : undefined;
+
   return (
     <div
       className="glass glass-hover rounded-2xl p-5 slide-up"
       style={{ animationDelay: `${index * 60}ms` }}
+      title={noNameTitle}
     >
-      <div className="flex gap-4 items-start">
+      <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
 
         <div className="flex-1 min-w-0">
@@ -162,7 +165,7 @@ export default function ActivityCard({
         </div>
       </div>
 
-      <div className={`mt-4 transition-opacity ${!userName ? "opacity-30 pointer-events-none select-none" : ""}`}>
+      <div className={`mt-4 transition-opacity ${!userName ? "opacity-25 pointer-events-none select-none" : ""}`}>
         <div className="flex items-center justify-between gap-3">
           <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating || !userName} />
           <div className="text-xs text-white/35 text-right">
