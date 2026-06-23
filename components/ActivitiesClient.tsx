@@ -147,6 +147,7 @@ export default function ActivitiesClient({ activities }: Props) {
                   ratingCount={activity.rating_count}
                   userRating={userRatings[activity.id] ?? 0}
                   voterId={voterId}
+                  userName={userName}
                   index={i}
                 />
               ))}

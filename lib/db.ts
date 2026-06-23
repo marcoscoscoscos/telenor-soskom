@@ -49,19 +49,30 @@ export async function setRating(
   stars: number // 0 = remove rating
 ): Promise<void> {
   const db = getClient();
-  if (stars === 0) {
-    const { error } = await db
+
+  // Check if this voter already rated this activity
+  const { data: existing } = await db
+    .from("votes")
+    .select("id")
+    .eq("activity_id", activityId)
+    .eq("voter_id", voterId)
+    .maybeSingle();
+
+  if (stars === 0 || existing) {
+    // Delete (stars=0) or overwrite existing rating
+    const { error: delErr } = await db
       .from("votes")
       .delete()
       .eq("activity_id", activityId)
       .eq("voter_id", voterId);
-    if (error) throw error;
-  } else {
-    const { error } = await db.from("votes").upsert(
-      { activity_id: activityId, voter_id: voterId, stars },
-      { onConflict: "activity_id,voter_id" }
-    );
-    if (error) throw error;
+    if (delErr) throw delErr;
+  }
+
+  if (stars > 0) {
+    const { error: insErr } = await db
+      .from("votes")
+      .insert({ activity_id: activityId, voter_id: voterId, stars });
+    if (insErr) throw insErr;
   }
 }
 

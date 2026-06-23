@@ -14,6 +14,7 @@ type Props = {
   ratingCount: number;
   userRating: number; // 0 = not rated
   voterId: string;
+  userName: string;
   index: number;
 };
 
@@ -63,6 +64,7 @@ export default function ActivityCard({
   ratingCount,
   userRating,
   voterId,
+  userName,
   index,
 }: Props) {
   const [optimisticRating, setOptimisticRating] = useState(userRating);
@@ -71,7 +73,10 @@ export default function ActivityCard({
   const [isRating, startRating] = useTransition();
   const [isDeleting, startDeleting] = useTransition();
 
-  const isOwner = voterId && activityVoterId === voterId;
+  // Match by voter_id (new activities) or by name (old activities before voter_id was added)
+  const isOwner =
+    (voterId && activityVoterId && activityVoterId === voterId) ||
+    (userName && addedBy && addedBy.toLowerCase() === userName.toLowerCase());
 
   function handleRate(stars: number) {
     const prev = optimisticRating;
