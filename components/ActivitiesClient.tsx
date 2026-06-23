@@ -26,15 +26,12 @@ export default function ActivitiesClient({ activities }: Props) {
     const savedName = localStorage.getItem("voter_name") ?? "";
     setUserName(savedName);
     setNameInput(savedName);
-    if (savedName) {
-      getUserRatings(savedName.toLowerCase().trim()).then(setUserRatings);
-    }
   }, []);
 
   useEffect(() => {
     if (!voterId) return;
     getUserRatings(voterId).then(setUserRatings);
-  }, [activities, voterId]);
+  }, [voterId]);
 
   function saveName() {
     const name = nameInput.trim();
@@ -166,7 +163,6 @@ export default function ActivitiesClient({ activities }: Props) {
                   userRating={userRatings[activity.id] ?? 0}
                   voterId={voterId}
                   userName={userName}
-                  index={i}
                 />
               ))}
             </div>

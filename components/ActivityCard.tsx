@@ -16,7 +16,6 @@ type Props = {
   userRating: number;
   voterId: string;
   userName: string;
-  index: number;
 };
 
 function StarPicker({
@@ -66,7 +65,6 @@ export default function ActivityCard({
   userRating,
   voterId,
   userName,
-  index,
 }: Props) {
   const [optimisticRating, setOptimisticRating] = useState(userRating);
   const [optimisticTotal, setOptimisticTotal] = useState(voteCount);
@@ -83,9 +81,11 @@ export default function ActivityCard({
   // voter_id match = definitive owner; name match = fallback for old activities;
   // null voter_id = activity predates tracking, anyone can clean it up
   const isOwner =
-    (voterId && activityVoterId && activityVoterId === voterId) ||
-    (userName && addedBy && addedBy.toLowerCase() === userName.toLowerCase()) ||
-    activityVoterId === null;
+    !!userName && (
+      (voterId && activityVoterId && activityVoterId === voterId) ||
+      (addedBy && addedBy.toLowerCase() === userName.toLowerCase()) ||
+      activityVoterId === null
+    );
 
   function handleRate(stars: number) {
     const prev = optimisticRating;
@@ -116,10 +116,7 @@ export default function ActivityCard({
 
   return (
     <CursorTooltip text="Skriv inn navnet ditt først" enabled={!userName}>
-    <div
-      className="glass glass-hover rounded-2xl p-5 slide-up"
-      style={{ animationDelay: `${index * 60}ms` }}
-    >
+    <div className="glass glass-hover rounded-2xl p-5">
       <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
 
