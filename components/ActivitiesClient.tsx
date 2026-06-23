@@ -86,7 +86,7 @@ export default function ActivitiesClient({ activities }: Props) {
                   onClick={startEditing}
                   className="glass rounded-full px-3 py-2 text-xs text-white/50 hover:text-white hover:bg-white/10 transition-colors"
                 >
-                  Bytt navn
+                  ✏️
                 </button>
               </div>
             ) : (
