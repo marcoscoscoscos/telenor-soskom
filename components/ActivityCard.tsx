@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { toggleVote } from "@/app/actions";
+import { rateActivity, removeActivity } from "@/app/actions";
 
 type Props = {
   id: string;
@@ -9,11 +9,48 @@ type Props = {
   description: string;
   emoji: string;
   addedBy: string;
+  activityVoterId: string | null;
   voteCount: number;
-  hasVoted: boolean;
+  ratingCount: number;
+  userRating: number; // 0 = not rated
   voterId: string;
   index: number;
 };
+
+function StarPicker({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: number;
+  onChange: (n: number) => void;
+  disabled: boolean;
+}) {
+  const [hovered, setHovered] = useState(0);
+  const active = hovered || value;
+
+  return (
+    <div className="flex gap-0.5" onMouseLeave={() => setHovered(0)}>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={disabled}
+          onClick={() => onChange(star === value ? 0 : star)}
+          onMouseEnter={() => setHovered(star)}
+          className={`text-xl leading-none transition-all duration-100 disabled:cursor-default ${
+            star <= active
+              ? "text-yellow-400 scale-110"
+              : "text-white/20 hover:text-white/40"
+          }`}
+          style={{ transform: star <= active ? "scale(1.15)" : "scale(1)" }}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export default function ActivityCard({
   id,
@@ -21,61 +58,97 @@ export default function ActivityCard({
   description,
   emoji,
   addedBy,
+  activityVoterId,
   voteCount,
-  hasVoted,
+  ratingCount,
+  userRating,
   voterId,
   index,
 }: Props) {
-  const [optimisticVoted, setOptimisticVoted] = useState(hasVoted);
-  const [optimisticCount, setOptimisticCount] = useState(voteCount);
-  const [isPending, startTransition] = useTransition();
+  const [optimisticRating, setOptimisticRating] = useState(userRating);
+  const [optimisticTotal, setOptimisticTotal] = useState(voteCount);
+  const [optimisticCount, setOptimisticCount] = useState(ratingCount);
+  const [isRating, startRating] = useTransition();
+  const [isDeleting, startDeleting] = useTransition();
 
-  function handleVote() {
-    const prevVoted = optimisticVoted;
-    const nextVoted = !prevVoted;
-    setOptimisticVoted(nextVoted);
-    setOptimisticCount((c) => (nextVoted ? c + 1 : c - 1));
+  const isOwner = voterId && activityVoterId === voterId;
 
-    startTransition(async () => {
-      const result = await toggleVote(id, voterId, prevVoted);
+  function handleRate(stars: number) {
+    const prev = optimisticRating;
+    const starDiff = stars - prev; // can be negative, zero, or positive
+    setOptimisticRating(stars);
+    setOptimisticTotal((t) => Math.max(0, t + starDiff));
+    if (prev === 0 && stars > 0) setOptimisticCount((c) => c + 1);
+    if (prev > 0 && stars === 0) setOptimisticCount((c) => Math.max(0, c - 1));
+
+    startRating(async () => {
+      const result = await rateActivity(id, voterId, stars);
       if (result.error) {
-        // Roll back optimistic update
-        setOptimisticVoted(prevVoted);
-        setOptimisticCount((c) => (nextVoted ? c - 1 : c + 1));
+        setOptimisticRating(prev);
+        setOptimisticTotal((t) => Math.max(0, t - starDiff));
+        if (prev === 0 && stars > 0) setOptimisticCount((c) => Math.max(0, c - 1));
+        if (prev > 0 && stars === 0) setOptimisticCount((c) => c + 1);
       }
     });
   }
 
+  function handleDelete() {
+    startDeleting(async () => {
+      await removeActivity(id, voterId);
+    });
+  }
+
+  if (isDeleting) return null;
+
   return (
     <div
-      className="glass glass-hover rounded-2xl p-5 flex gap-4 items-start slide-up"
+      className="glass glass-hover rounded-2xl p-5 slide-up"
       style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Emoji */}
-      <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
+      <div className="flex gap-4 items-start">
+        {/* Emoji */}
+        <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <h3 className="font-bold text-lg text-white leading-tight">{title}</h3>
-        {description && (
-          <p className="text-sm text-white/50 mt-1 leading-relaxed">{description}</p>
-        )}
-        <p className="text-xs text-white/30 mt-2">Foreslått av {addedBy}</p>
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-bold text-lg text-white leading-tight">{title}</h3>
+            {isOwner && (
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="shrink-0 text-white/20 hover:text-red-400 transition-colors text-sm mt-0.5"
+                title="Slett aktivitet"
+              >
+                🗑
+              </button>
+            )}
+          </div>
+          {description && (
+            <p className="text-sm text-white/50 mt-1 leading-relaxed">{description}</p>
+          )}
+          <p className="text-xs text-white/25 mt-1.5">Foreslått av {addedBy}</p>
+        </div>
       </div>
 
-      {/* Vote */}
-      <button
-        onClick={handleVote}
-        disabled={isPending}
-        className={`vote-btn shrink-0 flex flex-col items-center gap-1 rounded-xl border px-3 py-2 min-w-[52px] ${
-          optimisticVoted
-            ? "voted text-white border-transparent shadow-[0_0_20px_rgba(199,125,255,0.3)]"
-            : "border-white/10 text-white/60 hover:border-white/20 hover:text-white bg-white/[0.03]"
-        }`}
-      >
-        <span className="text-lg leading-none">{optimisticVoted ? "💜" : "🤍"}</span>
-        <span className="text-sm font-bold leading-none">{optimisticCount}</span>
-      </button>
+      {/* Star rating row */}
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <StarPicker
+          value={optimisticRating}
+          onChange={handleRate}
+          disabled={isRating}
+        />
+        <div className="text-xs text-white/35 text-right">
+          {optimisticCount > 0 ? (
+            <>
+              <span className="text-yellow-400 font-semibold">{optimisticTotal} ⭐</span>
+              {" "}fra {optimisticCount} {optimisticCount === 1 ? "person" : "personer"}
+            </>
+          ) : (
+            <span className="text-white/25">Ingen har stemt ennå</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

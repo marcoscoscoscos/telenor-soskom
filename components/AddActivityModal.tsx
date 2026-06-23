@@ -12,10 +12,11 @@ const EMOJIS = [
 type Props = {
   onClose: () => void;
   userName: string;
+  voterId: string;
   onSaveName: (name: string) => void;
 };
 
-export default function AddActivityModal({ onClose, userName, onSaveName }: Props) {
+export default function AddActivityModal({ onClose, userName, voterId, onSaveName }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [selectedEmoji, setSelectedEmoji] = useState("🎉");
   const [isPending, startTransition] = useTransition();
@@ -39,6 +40,7 @@ export default function AddActivityModal({ onClose, userName, onSaveName }: Prop
 
     fd.set("emoji", selectedEmoji);
     fd.set("added_by", name);
+    fd.set("voter_id", voterId);
     setError("");
 
     startTransition(async () => {

@@ -6,8 +6,10 @@ export type Activity = {
   description: string;
   emoji: string;
   added_by: string;
+  voter_id: string | null;
   created_at: string;
-  vote_count: number;
+  vote_count: number;   // sum of all stars
+  rating_count: number; // number of people who rated
 };
 
 function getClient() {
@@ -29,40 +31,62 @@ export async function listActivities(): Promise<Activity[]> {
 }
 
 export async function createActivity(
-  activity: Omit<Activity, "id" | "vote_count" | "created_at">
+  activity: Omit<Activity, "id" | "vote_count" | "rating_count" | "created_at">
 ): Promise<void> {
   const { error } = await getClient().from("activities").insert({
     title: activity.title,
     description: activity.description,
     emoji: activity.emoji,
     added_by: activity.added_by,
+    voter_id: activity.voter_id,
   });
   if (error) throw error;
 }
 
-export async function castVote(activityId: string, voterId: string): Promise<void> {
-  const { error } = await getClient()
-    .from("votes")
-    .insert({ activity_id: activityId, voter_id: voterId });
-  // Ignore unique-constraint error (already voted)
-  if (error && error.code !== "23505") throw error;
+export async function setRating(
+  activityId: string,
+  voterId: string,
+  stars: number // 0 = remove rating
+): Promise<void> {
+  const db = getClient();
+  if (stars === 0) {
+    const { error } = await db
+      .from("votes")
+      .delete()
+      .eq("activity_id", activityId)
+      .eq("voter_id", voterId);
+    if (error) throw error;
+  } else {
+    const { error } = await db.from("votes").upsert(
+      { activity_id: activityId, voter_id: voterId, stars },
+      { onConflict: "activity_id,voter_id" }
+    );
+    if (error) throw error;
+  }
 }
 
-export async function removeVote(activityId: string, voterId: string): Promise<void> {
-  const { error } = await getClient()
-    .from("votes")
-    .delete()
-    .eq("activity_id", activityId)
-    .eq("voter_id", voterId);
-  if (error) throw error;
-}
-
-export async function getVotedActivityIds(voterId: string): Promise<string[]> {
+export async function getUserRatings(
+  voterId: string
+): Promise<Record<string, number>> {
   const { data, error } = await getClient()
     .from("votes")
-    .select("activity_id")
+    .select("activity_id, stars")
     .eq("voter_id", voterId);
 
-  if (error) return [];
-  return (data ?? []).map((v) => v.activity_id as string);
+  if (error) return {};
+  return Object.fromEntries(
+    (data ?? []).map((v) => [v.activity_id as string, v.stars as number])
+  );
+}
+
+export async function deleteActivity(
+  activityId: string,
+  voterId: string
+): Promise<void> {
+  const { error } = await getClient()
+    .from("activities")
+    .delete()
+    .eq("id", activityId)
+    .eq("voter_id", voterId);
+  if (error) throw error;
 }

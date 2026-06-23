@@ -9,7 +9,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Hva gjør vi? 🎉",
+  title: "Hvilke aktiviteter vil DU gjøre i sommer? 🌞",
   description: "Stem på og foreslå sosiale aktiviteter for sommerjobben 2026!",
 };
 

@@ -4,16 +4,16 @@ import { revalidatePath } from "next/cache";
 import {
   listActivities,
   createActivity,
-  castVote,
-  removeVote,
-  getVotedActivityIds,
+  setRating,
+  getUserRatings,
+  deleteActivity,
 } from "@/lib/db";
 
 export async function getActivities() {
   return listActivities();
 }
 
-export { getVotedActivityIds as getVotesForVoter };
+export { getUserRatings };
 
 export async function addActivity(
   formData: FormData
@@ -22,6 +22,7 @@ export async function addActivity(
   const description = formData.get("description") as string;
   const emoji = formData.get("emoji") as string;
   const addedBy = formData.get("added_by") as string;
+  const voterId = formData.get("voter_id") as string;
 
   if (!title?.trim()) return { error: "Aktiviteten trenger et navn." };
   if (!addedBy?.trim()) return { error: "Du må skrive inn navnet ditt." };
@@ -32,30 +33,39 @@ export async function addActivity(
       description: description?.trim() ?? "",
       emoji: emoji || "🎉",
       added_by: addedBy.trim(),
+      voter_id: voterId || null,
     });
   } catch {
-    return { error: "Klarte ikke å lagre. Sjekk at Supabase er koblet til og kjør SQL-skjemaet." };
+    return { error: "Klarte ikke å lagre. Sjekk at Supabase er koblet til." };
   }
 
   revalidatePath("/");
   return { error: null };
 }
 
-export async function toggleVote(
+export async function rateActivity(
   activityId: string,
   voterId: string,
-  hasVoted: boolean
+  stars: number
 ): Promise<{ error: string | null }> {
   try {
-    if (hasVoted) {
-      await removeVote(activityId, voterId);
-    } else {
-      await castVote(activityId, voterId);
-    }
+    await setRating(activityId, voterId, stars);
   } catch {
-    return { error: "Klarte ikke å stemme. Prøv igjen." };
+    return { error: "Klarte ikke å gi stjerner. Prøv igjen." };
   }
+  revalidatePath("/");
+  return { error: null };
+}
 
+export async function removeActivity(
+  activityId: string,
+  voterId: string
+): Promise<{ error: string | null }> {
+  try {
+    await deleteActivity(activityId, voterId);
+  } catch {
+    return { error: "Klarte ikke å slette aktiviteten." };
+  }
   revalidatePath("/");
   return { error: null };
 }
