@@ -113,13 +113,17 @@ export default function ActivityCard({
 
   if (isDeleting) return null;
 
-  const noNameTitle = !userName ? "Skriv inn navnet ditt først" : undefined;
-
   return (
+    <div className="relative group" style={{ animationDelay: `${index * 60}ms` }}>
+      {!userName && (
+        <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+          <div className="bg-[#1a1a24] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white whitespace-nowrap shadow-xl">
+            Skriv inn navnet ditt først
+          </div>
+        </div>
+      )}
     <div
       className="glass glass-hover rounded-2xl p-5 slide-up"
-      style={{ animationDelay: `${index * 60}ms` }}
-      title={noNameTitle}
     >
       <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
@@ -180,6 +184,7 @@ export default function ActivityCard({
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -155,19 +155,27 @@ export default function ActivitiesClient({ activities }: Props) {
           {!hasName && (
             <p className="text-xs text-white/40">Skriv inn og lagre navnet ditt for å legge til forslag</p>
           )}
-          <button
-            onClick={() => hasName && setShowModal(true)}
-            disabled={!hasName}
-            title={!hasName ? "Skriv inn navnet ditt først" : undefined}
-            className={`rounded-2xl px-8 py-4 text-white font-bold text-base flex items-center gap-2 transition-all ${
-              hasName
-                ? "btn-gradient shadow-[0_8px_32px_rgba(199,125,255,0.35)]"
-                : "bg-white/10 cursor-not-allowed opacity-50"
-            }`}
-          >
-            <span className="text-xl leading-none">+</span>
-            Legg til forslag
-          </button>
+          <div className="relative group">
+            {!hasName && (
+              <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                <div className="bg-[#1a1a24] border border-white/15 rounded-lg px-3 py-1.5 text-xs text-white whitespace-nowrap shadow-xl">
+                  Skriv inn navnet ditt først
+                </div>
+              </div>
+            )}
+            <button
+              onClick={() => hasName && setShowModal(true)}
+              disabled={!hasName}
+              className={`rounded-2xl px-8 py-4 text-white font-bold text-base flex items-center gap-2 transition-all ${
+                hasName
+                  ? "btn-gradient shadow-[0_8px_32px_rgba(199,125,255,0.35)]"
+                  : "bg-white/10 cursor-not-allowed opacity-50"
+              }`}
+            >
+              <span className="text-xl leading-none">+</span>
+              Legg til forslag
+            </button>
+          </div>
         </div>
       </div>
 
