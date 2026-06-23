@@ -7,7 +7,7 @@ import {
   castVote,
   removeVote,
   getVotedActivityIds,
-} from "@/lib/kv";
+} from "@/lib/db";
 
 export async function getActivities() {
   return listActivities();
@@ -34,10 +34,7 @@ export async function addActivity(
       added_by: addedBy.trim(),
     });
   } catch {
-    return {
-      error:
-        "Klarte ikke å lagre. Sjekk at Vercel KV er koblet til prosjektet og redeploy.",
-    };
+    return { error: "Klarte ikke å lagre. Sjekk at Supabase er koblet til og kjør SQL-skjemaet." };
   }
 
   revalidatePath("/");

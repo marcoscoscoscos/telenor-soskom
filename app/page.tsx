@@ -1,6 +1,6 @@
 import { getActivities } from "./actions";
 import ActivitiesClient from "@/components/ActivitiesClient";
-import type { Activity } from "@/lib/kv";
+import type { Activity } from "@/lib/db";
 
 export const revalidate = 0;
 

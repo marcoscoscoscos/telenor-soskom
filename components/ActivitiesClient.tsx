@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ActivityCard from "./ActivityCard";
 import AddActivityModal from "./AddActivityModal";
-import type { Activity } from "@/lib/kv";
+import type { Activity } from "@/lib/db";
 import { getVotesForVoter } from "@/app/actions";
 
 type Props = {
