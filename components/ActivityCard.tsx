@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { rateActivity, removeActivity } from "@/app/actions";
 
 type Props = {
@@ -71,6 +71,11 @@ export default function ActivityCard({
   const [optimisticTotal, setOptimisticTotal] = useState(voteCount);
   const [optimisticCount, setOptimisticCount] = useState(ratingCount);
   const [isRating, startRating] = useTransition();
+
+  // Sync when server data arrives (e.g. after page reload loads userRatings async)
+  useEffect(() => { setOptimisticRating(userRating); }, [userRating]);
+  useEffect(() => { setOptimisticTotal(voteCount); }, [voteCount]);
+  useEffect(() => { setOptimisticCount(ratingCount); }, [ratingCount]);
   const [isDeleting, startDeleting] = useTransition();
   const [confirming, setConfirming] = useState(false);
 
