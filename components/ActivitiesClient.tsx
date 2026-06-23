@@ -47,6 +47,14 @@ export default function ActivitiesClient({ activities }: Props) {
     setIsEditing(true);
   }
 
+  function logout() {
+    localStorage.removeItem("voter_name");
+    setUserName("");
+    setNameInput("");
+    setUserRatings({});
+    setIsEditing(false);
+  }
+
   const totalStars = activities.reduce((s, a) => s + a.vote_count, 0);
 
   return (
@@ -116,12 +124,20 @@ export default function ActivitiesClient({ activities }: Props) {
                     Lagre
                   </button>
                   {hasName && (
-                    <button
-                      onClick={() => setIsEditing(false)}
-                      className="text-white/40 hover:text-white/70 text-sm transition-colors"
-                    >
-                      Avbryt
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setIsEditing(false)}
+                        className="text-white/40 hover:text-white/70 text-sm transition-colors shrink-0"
+                      >
+                        Avbryt
+                      </button>
+                      <button
+                        onClick={logout}
+                        className="text-red-400/70 hover:text-red-400 text-sm transition-colors shrink-0"
+                      >
+                        Logg ut
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
