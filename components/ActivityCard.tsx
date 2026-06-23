@@ -68,7 +68,7 @@ export default function ActivityCard({
   voterId,
   userName,
 }: Props) {
-  const isNew = Date.now() - new Date(createdAt).getTime() < 30 * 60 * 1000;
+  const isNew = Date.now() - new Date(createdAt).getTime() < 10 * 60 * 1000;
   const [optimisticRating, setOptimisticRating] = useState(userRating);
   const [optimisticTotal, setOptimisticTotal] = useState(voteCount);
   const [optimisticCount, setOptimisticCount] = useState(ratingCount);
