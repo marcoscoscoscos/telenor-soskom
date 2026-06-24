@@ -4,9 +4,17 @@ import { useRef, useState, useTransition } from "react";
 import { addActivity } from "@/app/actions";
 
 const EMOJIS = [
-  "🎉", "🍕", "🎮", "🏖️", "🎯", "🪩", "🍻", "🎸",
-  "🧗", "🎳", "🏓", "🍔", "🎤", "🎲", "🏄", "🚴",
-  "🍜", "🎨", "🪄", "⛺",
+  // Fest & sosialt
+  "🎉", "🥳", "🪩", "🎤", "🎸", "🥂", "🍻", "💃", "🕺", "🎭",
+  // Mat & drikke
+  "🍕", "🍔", "🍣", "🌮", "🍜", "🍦", "🍩", "🍿", "☕", "🫕",
+  // Sport & aktivitet
+  "🏖️", "🏄", "🚴", "🧗", "🏊", "🎾", "🏓", "🎳", "⛳", "🥾",
+  "🏀", "⚽", "🤿", "🛶", "🧘", "🤸", "🥊", "🛹", "🎿", "🏋️",
+  // Friluft & natur
+  "⛺", "🏕️", "🌊", "🌅", "🏔️", "🌲", "🌸", "🦋", "🌈", "🎆",
+  // Spill & kreativt
+  "🎮", "🎲", "🃏", "🧩", "🎨", "🪄", "🎯", "🚀", "✨", "🪅",
 ];
 
 type Props = {
@@ -68,7 +76,7 @@ export default function AddActivityModal({ onClose, userName, voterId }: Props) 
             <label className="block text-xs text-white/40 uppercase tracking-wider mb-2">
               Velg emoji
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
               {EMOJIS.map((emoji) => (
                 <button
                   key={emoji}
