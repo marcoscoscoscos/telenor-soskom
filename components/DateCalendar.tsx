@@ -165,14 +165,12 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                   <span className="text-[8px] leading-none mt-0.5" style={{ opacity: textOpacity * 0.8, color: textColor }}>
                     {MONTHS[date.getMonth()]}
                   </span>
-                  {count > 0 && (
-                    <span
-                      className="text-[9px] font-bold leading-none mt-1"
-                      style={{ opacity: textOpacity, color: textColor }}
-                    >
-                      {count}
-                    </span>
-                  )}
+                  <span
+                    className="text-[9px] font-bold leading-none mt-1"
+                    style={{ opacity: count > 0 ? textOpacity : 0, color: textColor }}
+                  >
+                    {count || 0}
+                  </span>
                 </button>
               );
             })}
