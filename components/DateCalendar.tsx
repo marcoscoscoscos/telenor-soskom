@@ -114,7 +114,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
           {/* Weekday headers */}
           <div className="grid grid-cols-7 gap-1 mb-1.5">
             {WEEKDAY_HEADERS.map((d) => (
-              <div key={d} className="text-center text-[9px] text-white/55 font-semibold tracking-wide">
+              <div key={d} className="text-center text-[11px] text-white/55 font-semibold tracking-wide">
                 {d}
               </div>
             ))}
@@ -157,16 +157,16 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                     <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-white" />
                   )}
                   <span
-                    className={`text-[11px] font-bold leading-none ${isToday && !useDarkText ? "text-[#c77dff]" : ""}`}
+                    className={`text-[13px] font-bold leading-none ${isToday && !useDarkText ? "text-[#c77dff]" : ""}`}
                     style={{ opacity: textOpacity, color: textColor }}
                   >
                     {date.getDate()}
                   </span>
-                  <span className="text-[8px] leading-none mt-0.5" style={{ opacity: textOpacity * 0.8, color: textColor }}>
+                  <span className="text-[10px] leading-none mt-0.5" style={{ opacity: textOpacity * 0.8, color: textColor }}>
                     {MONTHS[date.getMonth()]}
                   </span>
                   <span
-                    className="text-[9px] font-bold leading-none mt-1"
+                    className="text-[11px] font-bold leading-none mt-1"
                     style={{ opacity: count > 0 ? textOpacity : 0, color: textColor }}
                   >
                     {count || 0}
@@ -187,9 +187,9 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                 />
               ))}
             </div>
-            <span className="text-[9px] text-white/50">Færre → Flest</span>
+            <span className="text-[11px] text-white/50">Færre → Flest</span>
             {!userName && (
-              <span className="text-[9px] text-white/50 ml-auto">Logg inn for å stemme</span>
+              <span className="text-[11px] text-white/50 ml-auto">Logg inn for å stemme</span>
             )}
           </div>
         </div>
