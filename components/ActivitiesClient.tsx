@@ -39,6 +39,27 @@ export default function ActivitiesClient({ activities }: Props) {
   const voterId = userName.toLowerCase().trim();
   const hasName = !!userName;
 
+  // Stable display order: set once on first load, never re-sorted while the user is on the page.
+  // New activities are appended at the bottom; deleted ones are removed.
+  const [stableIds, setStableIds] = useState<string[]>(() => activities.map(a => a.id));
+
+  useEffect(() => {
+    setStableIds(prev => {
+      const currentIds = new Set(activities.map(a => a.id));
+      const kept = prev.filter(id => currentIds.has(id));
+      const keptSet = new Set(kept);
+      const added = activities.map(a => a.id).filter(id => !keptSet.has(id));
+      return [...kept, ...added];
+    });
+  }, [activities]);
+
+  const activityMap = useMemo(
+    () => Object.fromEntries(activities.map(a => [a.id, a])),
+    [activities]
+  );
+
+  const displayActivities = stableIds.map(id => activityMap[id]).filter(Boolean) as typeof activities;
+
   useEffect(() => {
     const savedName = localStorage.getItem("voter_name") ?? "";
     setUserName(savedName);
@@ -189,7 +210,7 @@ export default function ActivitiesClient({ activities }: Props) {
         <main className="flex-1 px-4 pb-16 max-w-xl mx-auto w-full">
           <div className="flex items-center justify-between mb-5 text-sm">
             <span className="text-white/40">
-              <span className="text-white font-bold">{activities.length}</span>{" "}
+              <span className="text-white font-bold">{displayActivities.length}</span>{" "}
               forslag &middot;{" "}
               <span className="text-yellow-400 font-bold">{totalStars} ⭐</span>{" "}
               totalt
@@ -225,14 +246,14 @@ export default function ActivitiesClient({ activities }: Props) {
               </button>
             </CursorTooltip>
 
-            {activities.length === 0 ? (
+            {displayActivities.length === 0 ? (
               <div className="text-center py-20 text-white/30">
                 <div className="text-5xl mb-4">🌴</div>
                 <p className="font-semibold text-white/50">Ingen forslag ennå</p>
                 <p className="text-sm mt-1">Vær den første til å legge til noe!</p>
               </div>
             ) : (
-              activities.map((activity) => (
+              displayActivities.map((activity) => (
                 <ActivityCard
                   key={activity.id}
                   id={activity.id}
