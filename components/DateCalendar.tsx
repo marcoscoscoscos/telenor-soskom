@@ -99,7 +99,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
     <div className="mt-3 pt-3 border-t border-white/10">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 text-xs text-white hover:bg-white/8 transition-all w-full rounded-lg px-2 py-1.5 -mx-2 group"
+        className="flex items-center gap-2 text-sm text-white hover:bg-white/8 transition-all w-full rounded-lg px-2 py-1.5 -mx-2 group"
       >
         <span className="group-hover:scale-110 transition-transform">📅</span>
         <span className="font-medium">Når kan du?</span>
@@ -149,7 +149,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                   disabled={!userName || isPending}
                   title={count > 0 ? `${count} ${count === 1 ? "person" : "personer"}` : ""}
                   className={`relative flex flex-col items-center justify-center py-2 rounded-lg transition-all duration-150 disabled:cursor-not-allowed select-none ${
-                    isSelected ? "ring-[3px] ring-white shadow-[0_0_8px_rgba(255,255,255,0.5)]" : "hover:ring-1 hover:ring-white/30"
+                    isSelected ? "ring-2 ring-white shadow-[0_0_6px_rgba(255,255,255,0.4)]" : "hover:ring-1 hover:ring-white/30"
                   } ${!userName ? "opacity-40" : ""}`}
                   style={{ backgroundColor: bgColor }}
                 >
