@@ -99,7 +99,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
     <div className="mt-3 pt-3 border-t border-white/10">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 text-xs text-white/30 hover:text-white hover:bg-white/8 transition-all w-full rounded-lg px-2 py-1.5 -mx-2 group"
+        className="flex items-center gap-2 text-xs text-white hover:bg-white/8 transition-all w-full rounded-lg px-2 py-1.5 -mx-2 group"
       >
         <span className="group-hover:scale-110 transition-transform">📅</span>
         <span className="font-medium">Når kan du?</span>
