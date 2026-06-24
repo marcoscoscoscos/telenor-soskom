@@ -64,11 +64,21 @@ export default function ActivitiesClient({ activities }: Props) {
     const savedName = localStorage.getItem("voter_name") ?? "";
     setUserName(savedName);
     setNameInput(savedName);
+    if (savedName) {
+      const id = savedName.toLowerCase().trim();
+      try {
+        const cached = localStorage.getItem(`ratings_${id}`);
+        if (cached) setUserRatings(JSON.parse(cached));
+      } catch {}
+    }
   }, []);
 
   useEffect(() => {
     if (!voterId) return;
-    getUserRatings(voterId).then(setUserRatings);
+    getUserRatings(voterId).then((ratings) => {
+      setUserRatings(ratings);
+      try { localStorage.setItem(`ratings_${voterId}`, JSON.stringify(ratings)); } catch {}
+    });
   }, [voterId]);
 
   function saveName() {
@@ -77,7 +87,15 @@ export default function ActivitiesClient({ activities }: Props) {
     setUserName(name);
     localStorage.setItem("voter_name", name);
     setIsEditing(false);
-    getUserRatings(name.toLowerCase().trim()).then(setUserRatings);
+    const id = name.toLowerCase().trim();
+    try {
+      const cached = localStorage.getItem(`ratings_${id}`);
+      if (cached) setUserRatings(JSON.parse(cached));
+    } catch {}
+    getUserRatings(id).then((ratings) => {
+      setUserRatings(ratings);
+      try { localStorage.setItem(`ratings_${id}`, JSON.stringify(ratings)); } catch {}
+    });
   }
 
   function startEditing() {
