@@ -8,6 +8,7 @@ import {
   getUserRatings,
   deleteActivity,
   getDateVotesForActivity,
+  getDateVotePersonCounts,
   toggleDateVote,
 } from "@/lib/db";
 
@@ -73,6 +74,10 @@ export async function removeActivity(
 
 export async function getDateVotes(activityId: string) {
   return getDateVotesForActivity(activityId);
+}
+
+export async function getAllDateVotePersonCounts() {
+  return getDateVotePersonCounts();
 }
 
 export async function voteOnDate(

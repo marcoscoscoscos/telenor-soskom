@@ -115,6 +115,19 @@ export async function getDateVotesForActivity(activityId: string): Promise<DateV
   return Object.entries(grouped).map(([date, voterIds]) => ({ date, voterIds }));
 }
 
+export async function getDateVotePersonCounts(): Promise<Record<string, number>> {
+  const { data } = await getClient()
+    .from("date_votes")
+    .select("activity_id, voter_id");
+
+  const counts: Record<string, Set<string>> = {};
+  (data ?? []).forEach(({ activity_id, voter_id }: { activity_id: string; voter_id: string }) => {
+    if (!counts[activity_id]) counts[activity_id] = new Set();
+    counts[activity_id].add(voter_id);
+  });
+  return Object.fromEntries(Object.entries(counts).map(([id, s]) => [id, s.size]));
+}
+
 export async function toggleDateVote(
   activityId: string,
   voterId: string,

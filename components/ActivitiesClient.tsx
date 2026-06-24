@@ -5,7 +5,7 @@ import ActivityCard from "./ActivityCard";
 import AddActivityModal from "./AddActivityModal";
 import CursorTooltip from "./CursorTooltip";
 import type { Activity } from "@/lib/db";
-import { getUserRatings } from "@/app/actions";
+import { getUserRatings, getAllDateVotePersonCounts } from "@/app/actions";
 
 type RGB = [number, number, number];
 
@@ -34,6 +34,7 @@ export default function ActivitiesClient({ activities }: Props) {
   const [nameInput, setNameInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [userRatings, setUserRatings] = useState<Record<string, number>>({});
+  const [datePersonCounts, setDatePersonCounts] = useState<Record<string, number>>({});
 
   // voter_id is derived directly from the name — same name = same identity everywhere
   const voterId = userName.toLowerCase().trim();
@@ -75,6 +76,7 @@ export default function ActivitiesClient({ activities }: Props) {
       setUserRatings(ratings);
       try { localStorage.setItem(`ratings_${id}`, JSON.stringify(ratings)); } catch {}
     });
+    getAllDateVotePersonCounts().then(setDatePersonCounts);
   }, []);
 
   function saveName() {
@@ -282,6 +284,7 @@ export default function ActivitiesClient({ activities }: Props) {
                   userRating={userRatings[activity.id] ?? 0}
                   voterId={voterId}
                   userName={userName}
+                  initialDatePersonCount={datePersonCounts[activity.id] ?? 0}
                 />
               ))
             )}

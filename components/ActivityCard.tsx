@@ -18,6 +18,7 @@ type Props = {
   userRating: number;
   voterId: string;
   userName: string;
+  initialDatePersonCount: number;
 };
 
 function StarPicker({
@@ -68,6 +69,7 @@ export default function ActivityCard({
   userRating,
   voterId,
   userName,
+  initialDatePersonCount,
 }: Props) {
   const isNew = Date.now() - new Date(createdAt).getTime() < 60 * 60 * 1000;
   const [optimisticRating, setOptimisticRating] = useState(userRating);
@@ -186,7 +188,7 @@ export default function ActivityCard({
         </div>
       </div>
 
-      <DateCalendar activityId={id} voterId={voterId} userName={userName} />
+      <DateCalendar activityId={id} voterId={voterId} userName={userName} initialPersonCount={initialDatePersonCount} />
     </div>
   );
 

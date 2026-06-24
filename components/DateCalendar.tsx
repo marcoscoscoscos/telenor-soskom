@@ -34,13 +34,14 @@ type Props = {
   activityId: string;
   voterId: string;
   userName: string;
+  initialPersonCount: number;
 };
 
-export default function DateCalendar({ activityId, voterId, userName }: Props) {
+export default function DateCalendar({ activityId, voterId, userName, initialPersonCount }: Props) {
   const [open, setOpen] = useState(false);
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
   const [myVotes, setMyVotes] = useState<Set<string>>(new Set());
-  const [uniquePersonCount, setUniquePersonCount] = useState(0);
+  const [uniquePersonCount, setUniquePersonCount] = useState(initialPersonCount);
   const [isPending, startTransition] = useTransition();
 
   const today = useMemo(() => {
@@ -59,8 +60,9 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
   const todayStr = toLocalDateStr(today);
   const startOffset = (dates[0].getDay() + 6) % 7; // Monday = 0
 
-  // Fetch full data on mount — populates badge and calendar in one go
+  // Fetch full data only when opened (lazy) — badge count comes from initialPersonCount prop
   useEffect(() => {
+    if (!open) return;
     getDateVotes(activityId).then((data) => {
       const counts: Record<string, number> = {};
       const mine = new Set<string>();
@@ -74,7 +76,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
       setMyVotes(mine);
       setUniquePersonCount(allVoters.size);
     });
-  }, [activityId, voterId]);
+  }, [open, activityId, voterId]);
 
   function handleClick(dateStr: string) {
     if (!userName) return;
