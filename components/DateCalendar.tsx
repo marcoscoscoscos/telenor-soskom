@@ -59,18 +59,8 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
   const todayStr = toLocalDateStr(today);
   const startOffset = (dates[0].getDay() + 6) % 7; // Monday = 0
 
-  // Fetch count on mount so the badge is visible before opening
+  // Fetch full data on mount — populates badge and calendar in one go
   useEffect(() => {
-    getDateVotes(activityId).then((data) => {
-      const allVoters = new Set<string>();
-      data.forEach(({ voterIds }) => voterIds.forEach((id) => allVoters.add(id)));
-      setUniquePersonCount(allVoters.size);
-    });
-  }, [activityId]);
-
-  // Fetch full data when calendar is opened
-  useEffect(() => {
-    if (!open) return;
     getDateVotes(activityId).then((data) => {
       const counts: Record<string, number> = {};
       const mine = new Set<string>();
@@ -84,7 +74,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
       setMyVotes(mine);
       setUniquePersonCount(allVoters.size);
     });
-  }, [open, activityId, voterId]);
+  }, [activityId, voterId]);
 
   function handleClick(dateStr: string) {
     if (!userName) return;
