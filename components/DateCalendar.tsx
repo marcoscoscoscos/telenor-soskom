@@ -121,7 +121,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
       >
         <span className="group-hover:scale-110 transition-transform">📅</span>
         <span className="font-medium">Når kan du?</span>
-        {uniquePersonCount > 0 && !open && (
+        {uniquePersonCount > 0 && (
           <span className="text-[#c77dff]/60 group-hover:text-[#c77dff] font-semibold ml-1 transition-colors">{uniquePersonCount} svar</span>
         )}
         <span className="ml-auto text-white/45 group-hover:text-white/80 transition-colors">{open ? "▲" : "▼"}</span>
