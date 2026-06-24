@@ -167,7 +167,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                   </span>
                   <span
                     className="text-[11px] font-bold leading-none mt-1"
-                    style={{ opacity: count > 0 ? textOpacity : 0, color: textColor }}
+                    style={{ opacity: count > 0 ? 0.5 : 0, color: textColor }}
                   >
                     {count || 0}
                   </span>
