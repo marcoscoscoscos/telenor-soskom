@@ -137,10 +137,10 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                 ? lerpColor(COLOR_EMPTY, COLOR_FULL, ratio)
                 : "rgba(255,255,255,0.04)";
 
-              // Switch to dark text when background is bright (ratio > 0.5)
-              const useDarkText = ratio > 0.5;
-              const textColor = useDarkText ? `rgba(30,5,55,${0.7 + ratio * 0.3})` : undefined;
-              const textOpacity = count > 0 ? (useDarkText ? 1 : Math.max(0.65, ratio)) : 0.5;
+              // Switch to dark text when background is bright (ratio > 0.4)
+              const useDarkText = ratio > 0.4;
+              const textColor = useDarkText ? "rgb(15,2,35)" : "rgb(255,255,255)";
+              const textOpacity = count > 0 ? 1 : 0.55;
 
               return (
                 <button
@@ -149,7 +149,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                   disabled={!userName || isPending}
                   title={count > 0 ? `${count} ${count === 1 ? "person" : "personer"}` : ""}
                   className={`relative flex flex-col items-center justify-center py-2 rounded-lg transition-all duration-150 disabled:cursor-not-allowed select-none ${
-                    isSelected ? "ring-2 ring-white/60" : "hover:ring-1 hover:ring-white/25"
+                    isSelected ? "ring-[3px] ring-white shadow-[0_0_8px_rgba(255,255,255,0.5)]" : "hover:ring-1 hover:ring-white/30"
                   } ${!userName ? "opacity-40" : ""}`}
                   style={{ backgroundColor: bgColor }}
                 >
