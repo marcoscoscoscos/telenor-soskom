@@ -97,3 +97,44 @@ export async function deleteActivity(activityId: string): Promise<void> {
     .eq("id", activityId);
   if (error) throw error;
 }
+
+export type DateVote = { date: string; voterIds: string[] };
+
+export async function getDateVotesForActivity(activityId: string): Promise<DateVote[]> {
+  const { data } = await getClient()
+    .from("date_votes")
+    .select("date, voter_id")
+    .eq("activity_id", activityId);
+
+  const grouped: Record<string, string[]> = {};
+  (data ?? []).forEach(({ date, voter_id }: { date: string; voter_id: string }) => {
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(voter_id);
+  });
+
+  return Object.entries(grouped).map(([date, voterIds]) => ({ date, voterIds }));
+}
+
+export async function toggleDateVote(
+  activityId: string,
+  voterId: string,
+  date: string
+): Promise<void> {
+  const db = getClient();
+  const { data: existing } = await db
+    .from("date_votes")
+    .select("id")
+    .eq("activity_id", activityId)
+    .eq("voter_id", voterId)
+    .eq("date", date)
+    .maybeSingle();
+
+  if (existing) {
+    await db.from("date_votes").delete()
+      .eq("activity_id", activityId)
+      .eq("voter_id", voterId)
+      .eq("date", date);
+  } else {
+    await db.from("date_votes").insert({ activity_id: activityId, voter_id: voterId, date });
+  }
+}

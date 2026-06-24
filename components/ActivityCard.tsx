@@ -3,6 +3,7 @@
 import { useState, useEffect, useTransition } from "react";
 import { rateActivity, removeActivity } from "@/app/actions";
 import CursorTooltip from "./CursorTooltip";
+import DateCalendar from "./DateCalendar";
 
 type Props = {
   id: string;
@@ -184,6 +185,8 @@ export default function ActivityCard({
           </div>
         </div>
       </div>
+
+      <DateCalendar activityId={id} voterId={voterId} userName={userName} />
     </div>
   );
 

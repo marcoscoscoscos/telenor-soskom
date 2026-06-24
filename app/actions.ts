@@ -7,6 +7,8 @@ import {
   setRating,
   getUserRatings,
   deleteActivity,
+  getDateVotesForActivity,
+  toggleDateVote,
 } from "@/lib/db";
 
 export async function getActivities() {
@@ -64,6 +66,24 @@ export async function removeActivity(
     await deleteActivity(activityId);
   } catch {
     return { error: "Klarte ikke å slette aktiviteten." };
+  }
+  revalidatePath("/");
+  return { error: null };
+}
+
+export async function getDateVotes(activityId: string) {
+  return getDateVotesForActivity(activityId);
+}
+
+export async function voteOnDate(
+  activityId: string,
+  voterId: string,
+  date: string
+): Promise<{ error: string | null }> {
+  try {
+    await toggleDateVote(activityId, voterId, date);
+  } catch {
+    return { error: "Klarte ikke å stemme på dato." };
   }
   revalidatePath("/");
   return { error: null };
