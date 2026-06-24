@@ -104,11 +104,15 @@ export default function ActivitiesClient({ activities }: Props) {
         {/* Header */}
         <header className="pt-14 pb-8 px-4 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-3 leading-tight tracking-tight">
-            <span className="gradient-text">
-              Hvilke aktiviteter vil{" "}
-              <em className="not-italic gradient-text-2">DU</em>{" "}
-              gjøre i sommer?
-            </span>
+            {hasName ? (
+              <span className="gradient-text">
+                Hvilke aktiviteter vil{" "}
+                <em className="not-italic gradient-text-2">DU</em>{" "}
+                gjøre i sommer?
+              </span>
+            ) : (
+              <span className="gradient-text">Skriv inn navnet ditt</span>
+            )}
           </h1>
           <p className="text-white/50 text-base max-w-sm sm:max-w-none mx-auto leading-relaxed">
             Gi stjerner til aktivitetene du liker, eller legg til ditt eget forslag
