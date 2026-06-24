@@ -62,24 +62,20 @@ export default function ActivitiesClient({ activities }: Props) {
 
   useEffect(() => {
     const savedName = localStorage.getItem("voter_name") ?? "";
+    const id = savedName.toLowerCase().trim();
     setUserName(savedName);
     setNameInput(savedName);
-    if (savedName) {
-      const id = savedName.toLowerCase().trim();
-      try {
-        const cached = localStorage.getItem(`ratings_${id}`);
-        if (cached) setUserRatings(JSON.parse(cached));
-      } catch {}
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!voterId) return;
-    getUserRatings(voterId).then((ratings) => {
+    if (!id) return;
+    // Show cached stars immediately, fetch fresh in background
+    try {
+      const cached = localStorage.getItem(`ratings_${id}`);
+      if (cached) setUserRatings(JSON.parse(cached));
+    } catch {}
+    getUserRatings(id).then((ratings) => {
       setUserRatings(ratings);
-      try { localStorage.setItem(`ratings_${voterId}`, JSON.stringify(ratings)); } catch {}
+      try { localStorage.setItem(`ratings_${id}`, JSON.stringify(ratings)); } catch {}
     });
-  }, [voterId]);
+  }, []);
 
   function saveName() {
     const name = nameInput.trim();
