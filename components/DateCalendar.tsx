@@ -149,7 +149,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                   disabled={!userName || isPending}
                   title={count > 0 ? `${count} ${count === 1 ? "person" : "personer"}` : ""}
                   className={`relative flex flex-col items-center justify-center py-2 rounded-lg transition-all duration-150 disabled:cursor-not-allowed select-none ${
-                    isSelected ? "ring-2 ring-white shadow-[0_0_6px_rgba(255,255,255,0.4)]" : "hover:ring-1 hover:ring-white/30"
+                    isSelected ? "shadow-[inset_0_0_0_2px_rgba(255,255,255,0.9)]" : "hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]"
                   } ${!userName ? "opacity-40" : ""}`}
                   style={{ backgroundColor: bgColor }}
                 >
