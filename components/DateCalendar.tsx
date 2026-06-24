@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition, useMemo } from "react";
+import { useState, useEffect, useTransition, useMemo, useRef } from "react";
 import { getDateVotes, voteOnDate } from "@/app/actions";
 
 const WEEKDAY_HEADERS = ["Ma", "Ti", "On", "To", "Fr", "Lø", "Sø"];
@@ -42,7 +42,13 @@ export default function DateCalendar({ activityId, voterId, userName, initialPer
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
   const [myVotes, setMyVotes] = useState<Set<string>>(new Set());
   const [uniquePersonCount, setUniquePersonCount] = useState(initialPersonCount);
+  const hasFetchedRef = useRef(false);
   const [isPending, startTransition] = useTransition();
+
+  // Sync badge from prop until we have real data from server
+  useEffect(() => {
+    if (!hasFetchedRef.current) setUniquePersonCount(initialPersonCount);
+  }, [initialPersonCount]);
 
   const today = useMemo(() => {
     const d = new Date();
@@ -72,6 +78,7 @@ export default function DateCalendar({ activityId, voterId, userName, initialPer
         if (voterId && voterIds.includes(voterId)) mine.add(date);
         voterIds.forEach((id) => allVoters.add(id));
       });
+      hasFetchedRef.current = true;
       setVoteCounts(counts);
       setMyVotes(mine);
       setUniquePersonCount(allVoters.size);
