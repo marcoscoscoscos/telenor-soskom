@@ -99,14 +99,14 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
     <div className="mt-3 pt-3 border-t border-white/10">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 text-xs text-white/40 hover:text-white/70 transition-colors w-full"
+        className="flex items-center gap-2 text-xs text-white/30 hover:text-white hover:bg-white/8 transition-all w-full rounded-lg px-2 py-1.5 -mx-2 group"
       >
-        <span>📅</span>
-        <span>Når kan du?</span>
+        <span className="group-hover:scale-110 transition-transform">📅</span>
+        <span className="font-medium">Når kan du?</span>
         {totalDateVotes > 0 && !open && (
-          <span className="text-[#c77dff] font-semibold ml-1">{totalDateVotes} svar</span>
+          <span className="text-[#c77dff]/60 group-hover:text-[#c77dff] font-semibold ml-1 transition-colors">{totalDateVotes} svar</span>
         )}
-        <span className="ml-auto opacity-50">{open ? "▲" : "▼"}</span>
+        <span className="ml-auto text-white/20 group-hover:text-white/60 transition-colors">{open ? "▲" : "▼"}</span>
       </button>
 
       {open && (
