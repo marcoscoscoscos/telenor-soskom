@@ -73,7 +73,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
   }, [open, activityId, voterId]);
 
   function handleClick(dateStr: string) {
-    if (!userName || isPending) return;
+    if (!userName) return;
     const voted = myVotes.has(dateStr);
 
     setMyVotes((prev) => {
