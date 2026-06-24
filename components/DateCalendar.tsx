@@ -40,6 +40,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
   const [open, setOpen] = useState(false);
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
   const [myVotes, setMyVotes] = useState<Set<string>>(new Set());
+  const [uniquePersonCount, setUniquePersonCount] = useState(0);
   const [isPending, startTransition] = useTransition();
 
   const today = useMemo(() => {
@@ -63,18 +64,26 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
     getDateVotes(activityId).then((data) => {
       const counts: Record<string, number> = {};
       const mine = new Set<string>();
+      const allVoters = new Set<string>();
       data.forEach(({ date, voterIds }) => {
         counts[date] = voterIds.length;
         if (voterId && voterIds.includes(voterId)) mine.add(date);
+        voterIds.forEach((id) => allVoters.add(id));
       });
       setVoteCounts(counts);
       setMyVotes(mine);
+      setUniquePersonCount(allVoters.size);
     });
   }, [open, activityId, voterId]);
 
   function handleClick(dateStr: string) {
     if (!userName) return;
     const voted = myVotes.has(dateStr);
+
+    // Optimistically track unique person count:
+    // first vote added → +1, last vote removed → -1
+    if (!voted && myVotes.size === 0) setUniquePersonCount((c) => c + 1);
+    if (voted && myVotes.size === 1) setUniquePersonCount((c) => Math.max(0, c - 1));
 
     setMyVotes((prev) => {
       const next = new Set(prev);
@@ -91,7 +100,6 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
     });
   }
 
-  const totalDateVotes = Object.values(voteCounts).reduce((s, n) => s + n, 0);
   const maxDateVotes = Math.max(...Object.values(voteCounts), 1);
   const topDate = Object.entries(voteCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
 
@@ -103,8 +111,8 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
       >
         <span className="group-hover:scale-110 transition-transform">📅</span>
         <span className="font-medium">Når kan du?</span>
-        {totalDateVotes > 0 && !open && (
-          <span className="text-[#c77dff]/60 group-hover:text-[#c77dff] font-semibold ml-1 transition-colors">{totalDateVotes} svar</span>
+        {uniquePersonCount > 0 && !open && (
+          <span className="text-[#c77dff]/60 group-hover:text-[#c77dff] font-semibold ml-1 transition-colors">{uniquePersonCount} svar</span>
         )}
         <span className="ml-auto text-white/45 group-hover:text-white/80 transition-colors">{open ? "▲" : "▼"}</span>
       </button>
