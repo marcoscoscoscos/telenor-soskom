@@ -146,7 +146,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                 <button
                   key={dateStr}
                   onClick={() => handleClick(dateStr)}
-                  disabled={!userName || isPending}
+                  disabled={!userName}
                   title={count > 0 ? `${count} ${count === 1 ? "person" : "personer"}` : ""}
                   className={`relative flex flex-col items-center justify-center py-2 rounded-lg transition-all duration-150 disabled:cursor-not-allowed select-none ${
                     isSelected ? "shadow-[inset_0_0_0_2px_rgba(255,255,255,0.9)]" : "hover:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2)]"
