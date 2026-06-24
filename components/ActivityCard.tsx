@@ -44,7 +44,7 @@ function StarPicker({
           className={`text-xl leading-none transition-all duration-100 disabled:cursor-default ${
             star <= active
               ? "text-yellow-400"
-              : "text-white/20 hover:text-white/40"
+              : "text-white/40 hover:text-white/70"
           }`}
           style={{ transform: star <= active ? "scale(1.15)" : "scale(1)" }}
         >
@@ -139,7 +139,7 @@ export default function ActivityCard({
                     </button>
                     <button
                       onClick={() => setConfirming(false)}
-                      className="text-xs text-white/30 hover:text-white/60 transition-colors"
+                      className="text-xs text-white/55 hover:text-white transition-colors"
                     >
                       Avbryt
                     </button>
@@ -147,7 +147,7 @@ export default function ActivityCard({
                 ) : (
                   <button
                     onClick={() => setConfirming(true)}
-                    className="text-white/20 hover:text-red-400 transition-colors text-base leading-none"
+                    className="text-white/40 hover:text-red-400 transition-colors text-base leading-none"
                     title="Slett aktivitet"
                   >
                     🗑
@@ -158,9 +158,9 @@ export default function ActivityCard({
           </div>
 
           {description && (
-            <p className="text-sm text-white/50 mt-1 leading-relaxed">{description}</p>
+            <p className="text-sm text-white/65 mt-1 leading-relaxed">{description}</p>
           )}
-          <p className="text-xs text-white/25 mt-1.5">Foreslått av {addedBy}</p>
+          <p className="text-xs text-white/50 mt-1.5">Foreslått av {addedBy}</p>
         </div>
       </div>
 
@@ -175,12 +175,12 @@ export default function ActivityCard({
                 <div className="text-base font-bold text-yellow-400 leading-tight">
                   {optimisticTotal} ⭐
                 </div>
-                <div className="text-xs text-white/50 mt-0.5">
+                <div className="text-xs text-white/65 mt-0.5">
                   fra {optimisticCount} {optimisticCount === 1 ? "person" : "personer"}
                 </div>
               </>
             ) : (
-              <span className="text-xs text-white/30">Ingen har stemt ennå</span>
+              <span className="text-xs text-white/55">Ingen har stemt ennå</span>
             )}
           </div>
         </div>

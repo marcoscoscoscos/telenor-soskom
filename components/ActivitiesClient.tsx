@@ -135,7 +135,7 @@ export default function ActivitiesClient({ activities }: Props) {
               <span className="gradient-text">Skriv inn navnet ditt</span>
             )}
           </h1>
-          <p className="text-white/50 text-base max-w-sm sm:max-w-none mx-auto leading-relaxed">
+          <p className="text-white/65 text-base max-w-sm sm:max-w-none mx-auto leading-relaxed">
             Gi stjerner til aktivitetene du liker, eller legg til ditt eget forslag
           </p>
 
@@ -144,13 +144,13 @@ export default function ActivitiesClient({ activities }: Props) {
             {hasName && !isEditing ? (
               /* Logged in — show pill + separate edit button */
               <div className="flex items-center gap-2">
-                <div className="glass rounded-full px-4 py-2 text-sm text-white/70 flex items-center gap-2">
+                <div className="glass rounded-full px-4 py-2 text-sm text-white/85 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#06d6a0]" />
                   {userName}
                 </div>
                 <button
                   onClick={startEditing}
-                  className="glass rounded-full px-3 py-2 text-xs text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                  className="glass rounded-full px-3 py-2 text-xs text-white/65 hover:text-white hover:bg-white/10 transition-colors"
                 >
                   ✏️
                 </button>
@@ -188,7 +188,7 @@ export default function ActivitiesClient({ activities }: Props) {
                     <>
                       <button
                         onClick={() => setIsEditing(false)}
-                        className="text-white/40 hover:text-white/70 text-sm transition-colors shrink-0"
+                        className="text-white/60 hover:text-white text-sm transition-colors shrink-0"
                       >
                         Avbryt
                       </button>
@@ -209,13 +209,13 @@ export default function ActivitiesClient({ activities }: Props) {
         {/* Main content */}
         <main className="flex-1 px-4 pb-16 max-w-xl mx-auto w-full">
           <div className="flex items-center justify-between mb-5 text-sm">
-            <span className="text-white/40">
+            <span className="text-white/60">
               <span className="text-white font-bold">{displayActivities.length}</span>{" "}
               forslag &middot;{" "}
               <span className="text-yellow-400 font-bold">{totalStars} ⭐</span>{" "}
               totalt
             </span>
-            <span className="text-white/25 text-xs">Sortert etter stjerner</span>
+            <span className="text-white/45 text-xs">Sortert etter stjerner</span>
           </div>
 
           <div className="space-y-3">
@@ -236,10 +236,10 @@ export default function ActivitiesClient({ activities }: Props) {
                   +
                 </div>
                 <div className="text-left">
-                  <p className={`font-semibold text-sm transition-colors ${hasName ? "text-white/60 group-hover:text-white/90" : "text-white/30"}`}>
+                  <p className={`font-semibold text-sm transition-colors ${hasName ? "text-white/75 group-hover:text-white" : "text-white/50"}`}>
                     Legg til forslag
                   </p>
-                  <p className="text-xs text-white/25 mt-0.5">
+                  <p className="text-xs text-white/50 mt-0.5">
                     {hasName ? "Klikk for å legge til din aktivitet" : "Logg inn for å legge til"}
                   </p>
                 </div>
@@ -247,9 +247,9 @@ export default function ActivitiesClient({ activities }: Props) {
             </CursorTooltip>
 
             {displayActivities.length === 0 ? (
-              <div className="text-center py-20 text-white/30">
+              <div className="text-center py-20 text-white/50">
                 <div className="text-5xl mb-4">🌴</div>
-                <p className="font-semibold text-white/50">Ingen forslag ennå</p>
+                <p className="font-semibold text-white/65">Ingen forslag ennå</p>
                 <p className="text-sm mt-1">Vær den første til å legge til noe!</p>
               </div>
             ) : (

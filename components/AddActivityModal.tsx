@@ -73,7 +73,7 @@ export default function AddActivityModal({ onClose, userName, voterId }: Props) 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           {/* Emoji picker */}
           <div>
-            <label className="block text-xs text-white/40 uppercase tracking-wider mb-2">
+            <label className="block text-xs text-white/60 uppercase tracking-wider mb-2">
               Velg emoji
             </label>
             <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
@@ -96,7 +96,7 @@ export default function AddActivityModal({ onClose, userName, voterId }: Props) 
 
           {/* Title */}
           <div>
-            <label className="block text-xs text-white/40 uppercase tracking-wider mb-2">
+            <label className="block text-xs text-white/60 uppercase tracking-wider mb-2">
               Aktivitet *
             </label>
             <input
@@ -110,7 +110,7 @@ export default function AddActivityModal({ onClose, userName, voterId }: Props) 
 
           {/* Description */}
           <div>
-            <label className="block text-xs text-white/40 uppercase tracking-wider mb-2">
+            <label className="block text-xs text-white/60 uppercase tracking-wider mb-2">
               Beskrivelse (valgfritt)
             </label>
             <textarea

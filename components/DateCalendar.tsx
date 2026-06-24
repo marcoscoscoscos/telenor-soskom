@@ -106,7 +106,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
         {totalDateVotes > 0 && !open && (
           <span className="text-[#c77dff]/60 group-hover:text-[#c77dff] font-semibold ml-1 transition-colors">{totalDateVotes} svar</span>
         )}
-        <span className="ml-auto text-white/20 group-hover:text-white/60 transition-colors">{open ? "▲" : "▼"}</span>
+        <span className="ml-auto text-white/45 group-hover:text-white/80 transition-colors">{open ? "▲" : "▼"}</span>
       </button>
 
       {open && (
@@ -114,7 +114,7 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
           {/* Weekday headers */}
           <div className="grid grid-cols-7 gap-1 mb-1.5">
             {WEEKDAY_HEADERS.map((d) => (
-              <div key={d} className="text-center text-[9px] text-white/25 font-semibold tracking-wide">
+              <div key={d} className="text-center text-[9px] text-white/55 font-semibold tracking-wide">
                 {d}
               </div>
             ))}
@@ -137,8 +137,10 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                 ? lerpColor(COLOR_EMPTY, COLOR_FULL, ratio)
                 : "rgba(255,255,255,0.04)";
 
-              // Text is white on high-ratio cells, faint otherwise
-              const textOpacity = count > 0 ? Math.max(0.6, ratio) : 0.35;
+              // Switch to dark text when background is bright (ratio > 0.5)
+              const useDarkText = ratio > 0.5;
+              const textColor = useDarkText ? `rgba(30,5,55,${0.7 + ratio * 0.3})` : undefined;
+              const textOpacity = count > 0 ? (useDarkText ? 1 : Math.max(0.65, ratio)) : 0.5;
 
               return (
                 <button
@@ -155,18 +157,18 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                     <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-white" />
                   )}
                   <span
-                    className={`text-[11px] font-bold leading-none ${isToday ? "text-[#c77dff]" : ""}`}
-                    style={{ opacity: isToday ? 1 : textOpacity }}
+                    className={`text-[11px] font-bold leading-none ${isToday && !useDarkText ? "text-[#c77dff]" : ""}`}
+                    style={{ opacity: textOpacity, color: textColor }}
                   >
                     {date.getDate()}
                   </span>
-                  <span className="text-[8px] leading-none mt-0.5" style={{ opacity: textOpacity * 0.7 }}>
+                  <span className="text-[8px] leading-none mt-0.5" style={{ opacity: textOpacity * 0.8, color: textColor }}>
                     {MONTHS[date.getMonth()]}
                   </span>
                   {count > 0 && (
                     <span
                       className="text-[9px] font-bold leading-none mt-1"
-                      style={{ opacity: Math.max(0.7, ratio) }}
+                      style={{ opacity: textOpacity, color: textColor }}
                     >
                       {count}
                     </span>
@@ -187,9 +189,9 @@ export default function DateCalendar({ activityId, voterId, userName }: Props) {
                 />
               ))}
             </div>
-            <span className="text-[9px] text-white/25">Færre → Flest</span>
+            <span className="text-[9px] text-white/50">Færre → Flest</span>
             {!userName && (
-              <span className="text-[9px] text-white/25 ml-auto">Logg inn for å stemme</span>
+              <span className="text-[9px] text-white/50 ml-auto">Logg inn for å stemme</span>
             )}
           </div>
         </div>
