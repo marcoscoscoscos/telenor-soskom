@@ -118,7 +118,7 @@ export default function ActivityCard({
   if (isDeleting) return null;
 
   const cardInner = (
-    <div className="glass glass-hover rounded-2xl p-5">
+    <div className="glass glass-hover rounded-2xl p-5 group">
       <div className={`flex gap-4 items-start transition-opacity ${!userName ? "opacity-35" : ""}`}>
         <div className="text-3xl shrink-0 mt-0.5 select-none">{emoji}</div>
 
@@ -165,7 +165,9 @@ export default function ActivityCard({
 
       <div className={`mt-4 transition-opacity ${!userName ? "opacity-25 pointer-events-none select-none" : ""}`}>
         <div className="flex items-center justify-between gap-3">
-          <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating || !userName} />
+          <div className="transition-transform duration-200 origin-left group-hover:scale-125">
+            <StarPicker value={optimisticRating} onChange={handleRate} disabled={isRating || !userName} />
+          </div>
           <div className="text-right">
             {optimisticCount > 0 ? (
               <>
